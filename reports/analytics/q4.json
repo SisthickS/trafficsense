@@ -1,0 +1,37 @@
+{
+  "qid": "q4",
+  "title": "Temporal speed volatility",
+  "question": "When and where are speeds most volatile from one 5-minute interval to the next, and is volatility linked to congestion?",
+  "findings": [
+    "Across 16,880,017 consecutive observed pairs, the 5-min speed change has std **1.75 mph**; 0.48% are sudden (|\u0394| \u2265 10 mph).",
+    "On working days volatility peaks at **18:00** (std \u0394 2.46 mph), 1.6\u00d7 the 01\u201304h level (1.54 mph). Weekends peak at 11:00 with 1.64 mph.",
+    "Sudden changes are 3.7\u00d7 more frequent in the working-day PM peak (0.96%) than at night (0.26%).",
+    "Per sensor, volatility rises with congestion: Pearson r = 0.44 (Spearman 0.67) between std \u0394 and congestion rate over 325 sensors. The most volatile sensor is 401351 (std \u0394 6.15 mph, 1.1% congested)."
+  ],
+  "implications": [
+    "Volatility is concentrated at congestion onset/clearance times, so the model gets `delta_5m`, `delta_15m`, `roll_std_60m` and `roll_min_60m` features.",
+    "High-volatility sensors are where 5-minute predictions will be hardest; report per-sensor error alongside volatility.",
+    "For the dashboard, smooth with a short rolling mean before displaying, to avoid flicker from 5-minute noise."
+  ],
+  "limitations": [
+    "\u0394 is only computed between two consecutive observed readings; forward-filled values are excluded.",
+    "Volatility reflects both real traffic dynamics and detector noise, which cannot be separated without ground truth."
+  ],
+  "metrics": {
+    "network_std_delta": 1.7538893549754848,
+    "sudden_share": 0.004829023572665833,
+    "peak_hour": 18,
+    "corr_vol_congestion": 0.4366755284944713,
+    "spearman_vol_congestion": 0.671381868612491
+  },
+  "tables": {
+    "hourly": "tables/q4_hourly.csv",
+    "top_volatile_sensors": "tables/q4_top_volatile_sensors.csv",
+    "sensors": "tables/q4_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q4_hourly.png",
+    "../figures/analytics/q4_dow_and_sensors.png"
+  ],
+  "seconds": 18.2
+}

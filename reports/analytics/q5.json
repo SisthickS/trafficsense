@@ -1,0 +1,40 @@
+{
+  "qid": "q5",
+  "title": "Persistent congestion hotspots",
+  "question": "Which sensors are congested persistently (most working days, for substantial time), are the hotspots stable month to month, and do they cluster along the road network?",
+  "findings": [
+    "**148 persistent hotspots** (45.5% of sensors) have \u2265 60 congested minutes on at least half of working days. A further 56 sensors reach that on 20\u201350% of working days, and 28 never do (sensitivity: 179 hotspots at \u2265 30 min, 148 hotspots at \u2265 60 min, 97 hotspots at \u2265 120 min).",
+    "Congestion is concentrated: the top 10 sensors (3.1% of sensors) account for 11.8% of all working-day congested minutes. The #1 sensor 400586 averages 365 congested min/day (persistence 100.0%).",
+    "Hotspots are stable: month-to-month Spearman rank correlation 0.94\u20130.97, top-20 Jaccard overlap 0.65 on average; 10 sensors are in the top 20 in every month.",
+    "Spatial clustering is weak: 59.9% of a hotspot's graph neighbours are hotspots vs 45.4% at random (1.3\u00d7 lift)."
+  ],
+  "implications": [
+    "A small, stable set of hotspots carries most congestion. The dashboard should give them a fixed watch-list panel, and model metrics should be reported for hotspot vs non-hotspot sensors.",
+    "Stable rankings justify train-period per-sensor statistics (`sensor_congested_rate`, `hist_*`) as features: they stay valid in the test months.",
+    "Neighbour features (`nbr_up_*`, `nbr_down_*`) let the model use congestion at adjacent sensors; Q7 quantifies how strongly and with what lag neighbours are linked."
+  ],
+  "limitations": [
+    "The hotspot definition (\u2265 60 min on \u2265 50% of working days) is a transparent convention; the sensitivity table and the per-sensor CSV allow other cut-offs.",
+    "Sensor locations are points; one congested freeway segment can contain several sensors."
+  ],
+  "metrics": {
+    "hotspots": 148,
+    "top10_share": 0.11767375936358998,
+    "min_month_spearman": 0.9373437130108272,
+    "always_top": 10,
+    "hotspot_neighbour_share": 0.5986509274873525,
+    "random_expectation": 0.4537037037037037
+  },
+  "tables": {
+    "top_hotspots": "tables/q5_top_hotspots.csv",
+    "monthly_stability": "tables/q5_monthly_stability.csv",
+    "threshold_sensitivity": "tables/q5_threshold_sensitivity.csv",
+    "classes": "tables/q5_classes.csv",
+    "all_sensors": "tables/q5_all_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q5_map.png",
+    "../figures/analytics/q5_ranking_stability.png"
+  ],
+  "seconds": 5.4
+}

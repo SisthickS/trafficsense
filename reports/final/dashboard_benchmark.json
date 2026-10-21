@@ -1,0 +1,241 @@
+{
+  "generated_at": "2026-10-21T05:54:32+00:00",
+  "samples_per_endpoint": 30,
+  "endpoints": {
+    "/ready": {
+      "direct": {
+        "p50_ms": 4.4,
+        "p95_ms": 6.8,
+        "mean_ms": 4.7,
+        "max_ms": 8.4,
+        "bytes": 44
+      },
+      "via_proxy": {
+        "p50_ms": 16.4,
+        "p95_ms": 19.9,
+        "mean_ms": 16.4,
+        "max_ms": 20.5,
+        "bytes": 44
+      }
+    },
+    "/api/v1/status": {
+      "direct": {
+        "p50_ms": 22.7,
+        "p95_ms": 58.2,
+        "mean_ms": 27.8,
+        "max_ms": 60.5,
+        "bytes": 1498
+      },
+      "via_proxy": {
+        "p50_ms": 28.3,
+        "p95_ms": 38.1,
+        "mean_ms": 28.7,
+        "max_ms": 43.1,
+        "bytes": 1498
+      }
+    },
+    "/api/v1/sensors?limit=50": {
+      "direct": {
+        "p50_ms": 14.6,
+        "p95_ms": 19.5,
+        "mean_ms": 15.2,
+        "max_ms": 19.7,
+        "bytes": 24738
+      },
+      "via_proxy": {
+        "p50_ms": 21.6,
+        "p95_ms": 26.5,
+        "mean_ms": 22.0,
+        "max_ms": 29.6,
+        "bytes": 24738
+      }
+    },
+    "/api/v1/hotspots?limit=50": {
+      "direct": {
+        "p50_ms": 13.2,
+        "p95_ms": 16.4,
+        "mean_ms": 13.4,
+        "max_ms": 16.6,
+        "bytes": 16188
+      },
+      "via_proxy": {
+        "p50_ms": 21.3,
+        "p95_ms": 28.8,
+        "mean_ms": 22.0,
+        "max_ms": 32.5,
+        "bytes": 16188
+      }
+    },
+    "/api/v1/predictions/latest?limit=50": {
+      "direct": {
+        "p50_ms": 16.1,
+        "p95_ms": 19.4,
+        "mean_ms": 16.6,
+        "max_ms": 21.2,
+        "bytes": 12668
+      },
+      "via_proxy": {
+        "p50_ms": 24.8,
+        "p95_ms": 32.0,
+        "mean_ms": 25.5,
+        "max_ms": 34.5,
+        "bytes": 12668
+      }
+    },
+    "/api/v1/analytics/questions/q5": {
+      "direct": {
+        "p50_ms": 8.7,
+        "p95_ms": 10.5,
+        "mean_ms": 8.7,
+        "max_ms": 12.5,
+        "bytes": 2429
+      },
+      "via_proxy": {
+        "p50_ms": 13.4,
+        "p95_ms": 34.9,
+        "mean_ms": 15.9,
+        "max_ms": 37.5,
+        "bytes": 2429
+      }
+    },
+    "/api/v1/analytics/questions/q7/tables/edges?limit=500": {
+      "direct": {
+        "p50_ms": 22.2,
+        "p95_ms": 28.4,
+        "mean_ms": 22.7,
+        "max_ms": 31.7,
+        "bytes": 86927
+      },
+      "via_proxy": {
+        "p50_ms": 28.1,
+        "p95_ms": 36.7,
+        "mean_ms": 28.7,
+        "max_ms": 39.0,
+        "bytes": 86927
+      }
+    },
+    "/api/v1/performance/overview": {
+      "direct": {
+        "p50_ms": 26.9,
+        "p95_ms": 31.8,
+        "mean_ms": 27.1,
+        "max_ms": 32.5,
+        "bytes": 43110
+      },
+      "via_proxy": {
+        "p50_ms": 35.9,
+        "p95_ms": 46.4,
+        "mean_ms": 37.3,
+        "max_ms": 49.5,
+        "bytes": 43110
+      }
+    },
+    "/api/v1/status/database": {
+      "direct": {
+        "p50_ms": 33.3,
+        "p95_ms": 37.1,
+        "mean_ms": 33.2,
+        "max_ms": 37.3,
+        "bytes": 1756
+      },
+      "via_proxy": {
+        "p50_ms": 46.9,
+        "p95_ms": 80.9,
+        "mean_ms": 50.8,
+        "max_ms": 100.2,
+        "bytes": 1756
+      }
+    }
+  },
+  "pages": {
+    "/": {
+      "p50_ms": 7.0,
+      "p95_ms": 12.3,
+      "mean_ms": 7.5,
+      "max_ms": 14.1,
+      "bytes": 25328
+    },
+    "/analytics": {
+      "p50_ms": 4.8,
+      "p95_ms": 7.2,
+      "mean_ms": 5.1,
+      "max_ms": 8.0,
+      "bytes": 11835
+    },
+    "/hotspots": {
+      "p50_ms": 5.9,
+      "p95_ms": 9.0,
+      "mean_ms": 6.2,
+      "max_ms": 11.9,
+      "bytes": 16577
+    },
+    "/live": {
+      "p50_ms": 5.9,
+      "p95_ms": 9.5,
+      "mean_ms": 6.5,
+      "max_ms": 21.8,
+      "bytes": 18175
+    },
+    "/models": {
+      "p50_ms": 6.1,
+      "p95_ms": 8.9,
+      "mean_ms": 6.2,
+      "max_ms": 9.7,
+      "bytes": 19823
+    },
+    "/performance": {
+      "p50_ms": 5.6,
+      "p95_ms": 7.0,
+      "mean_ms": 5.6,
+      "max_ms": 7.2,
+      "bytes": 12430
+    },
+    "/data": {
+      "p50_ms": 6.2,
+      "p95_ms": 9.5,
+      "mean_ms": 6.6,
+      "max_ms": 9.8,
+      "bytes": 11824
+    },
+    "/status": {
+      "p50_ms": 5.5,
+      "p95_ms": 7.5,
+      "mean_ms": 5.8,
+      "max_ms": 9.2,
+      "bytes": 17923
+    }
+  },
+  "throughput_hotspots": {
+    "workers": 8,
+    "requests": 200,
+    "rps": 109.1,
+    "p50_ms": 67.1,
+    "p95_ms": 100.2
+  },
+  "throughput_via_proxy": {
+    "workers": 8,
+    "requests": 200,
+    "rps": 71.0,
+    "p50_ms": 102.8,
+    "p95_ms": 170.1
+  },
+  "bundle": {
+    "js_files": 21,
+    "js_total_kb": 2190,
+    "js_gzip_kb": 709,
+    "largest": [
+      {
+        "file": "3sd0tf_n8-ler.js",
+        "kb": 1434
+      },
+      {
+        "file": "1dy1fl0lvp0rp.js",
+        "kb": 224
+      },
+      {
+        "file": "3h-0eer3_icr8.js",
+        "kb": 155
+      }
+    ]
+  }
+}

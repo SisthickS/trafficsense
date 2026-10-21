@@ -1,0 +1,38 @@
+{
+  "qid": "q8",
+  "title": "Sensor performance relative to peers",
+  "question": "Which sensors are consistently slower or more congested than their neighbouring sensors (local bottlenecks), and which disagree with their peers in ways that suggest detector problems?",
+  "findings": [
+    "Most sensors track their peers closely: median correlation with peer speed **0.84**, median |residual| 3.4 mph (6 isolated sensors without graph neighbours excluded).",
+    "**25 local bottlenecks** are much slower than their neighbours in the PM peak (z \u2264 \u22121.5) and congested \u2265 1.5\u00d7 as often; worst 402117: -23.7 mph vs peers, 67.8% vs 5.5% congested.",
+    "46 sensors have low agreement with their peers (r < 0.6). Their data quality is only marginally different (0.62% vs 0.29% non-observed; Spearman \u03c1 = -0.10), so low agreement more likely reflects genuinely local traffic conditions than detector faults, though detector drift cannot be ruled out.",
+    "10 sensors are consistently faster than their peers (z \u2265 +1.5); 7 of them are directly downstream of a flagged bottleneck, where traffic discharges after the restriction."
+  ],
+  "implications": [
+    "Local bottlenecks are where congestion **originates**; they are the natural anchor points for early warnings to adjacent sensors (Q7).",
+    "Low-agreement sensors should be marked on the dashboard and their model errors read with care. The `imputed_count_60m` feature already gives the model a data-quality signal."
+  ],
+  "limitations": [
+    "Peer speeds are adjacency-weighted means; a sensor at a true bottleneck has slower upstream and faster downstream neighbours, which partly cancel in the average.",
+    "The feature table excludes the first 7 days (lag warm-up) and rows with gaps; cleaning-stage missingness is used for the quality cross-check."
+  ],
+  "metrics": {
+    "median_peer_corr": 0.8437942109227495,
+    "bottlenecks": 25,
+    "low_agreement": 46,
+    "excluded_isolated": 6,
+    "spearman_corr_vs_quality": -0.09566047644374666,
+    "quality_linked": false,
+    "faster_downstream_of_bottleneck": 7
+  },
+  "tables": {
+    "bottlenecks": "tables/q8_bottlenecks.csv",
+    "low_agreement": "tables/q8_low_agreement.csv",
+    "flags": "tables/q8_flags.csv",
+    "all_sensors": "tables/q8_all_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q8_peer_scatter_map.png"
+  ],
+  "seconds": 5.1
+}

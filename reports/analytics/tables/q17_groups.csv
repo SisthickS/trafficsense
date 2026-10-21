@@ -1,0 +1,8 @@
+group,features
+temporal,"hour, slot_of_day, day_of_week, is_weekend, is_holiday, tod_sin, tod_cos, dow_sin, dow_cos"
+current,"speed, is_imputed, congested_now, speed_ratio_ff"
+lag,"speed_lag_5m, speed_lag_10m, speed_lag_15m, speed_lag_30m, speed_lag_60m, speed_target_slot_1d, speed_target_slot_1w, delta_5m, delta_15m"
+rolling,"roll_mean_15m, roll_mean_30m, roll_mean_60m, roll_std_60m, roll_min_60m, congested_frac_60m, imputed_count_60m"
+graph,"nbr_up_speed, nbr_down_speed, nbr_up_congested_frac, nbr_down_congested_frac"
+sensor,"latitude, longitude, in_degree, out_degree, ff_speed, sensor_congested_rate"
+profile,"hist_speed_next, hist_congested_rate_next"

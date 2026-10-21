@@ -1,0 +1,3 @@
+ Container trafficsense-mongo Running 
+ Container trafficsense-mongo Waiting 
+ Container trafficsense-mongo Healthy 

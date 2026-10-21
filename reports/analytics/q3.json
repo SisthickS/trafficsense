@@ -1,0 +1,43 @@
+{
+  "qid": "q3",
+  "title": "Congestion episode duration and recovery",
+  "question": "How long do congestion episodes last, when do the long ones happen, and how quickly does traffic recover to free flow after an episode ends?",
+  "findings": [
+    "52,017 episodes on 319 sensors. The median lasts **30 min** (p90 185 min, longest 13.4 h), and 70.1% last \u2265 15 min (the Caltrans duration criterion).",
+    "Duration is heavy-tailed: episodes \u2265 1 h are 34.4% of episodes but **80.5% of all congested minutes**.",
+    "AM peak episodes last longer (median 35 min, 37.0% \u2265 1 h) than PM peak episodes (median 25 min, 33.0% \u2265 1 h); PM peak has 23,470 episodes vs 19,533 (more, shorter episodes).",
+    "Recovery to free flow (\u2265 60 mph) takes a median **50 min** after the episode ends (p90 145 min); 17.2% of episodes do not reach free flow within 3 h.",
+    "In sustained episodes (\u2265 15 min), speed falls a median 13.1 mph in the 15 min before onset and rises 17.6 mph in the 15 min after the end. The first rebound is quick, but the last stretch to free flow is slow (median 50 min)."
+  ],
+  "implications": [
+    "Most episodes are short, but most congested **time** falls in long (\u2265 1 h) episodes. A 5-minute-ahead model therefore mainly has to get onset and clearance right; inside a long episode, persistence is already accurate.",
+    "Full recovery to free flow lags the end of congestion. The dashboard should show a 'recovering' state (35\u201360 mph after an episode) rather than an immediate 'all clear'.",
+    "Episode duration and recovery are inputs to the severity index (Q9)."
+  ],
+  "limitations": [
+    "Short gaps (\u2264 15 min) were forward-filled during cleaning, so an episode can span a filled reading; longer gaps split episodes.",
+    "Episodes that reach the end of the data have no observed recovery and are counted as 'not recovered'.",
+    "Local wall-clock hours are used for start periods (DST-aware), while durations use true UTC time."
+  ],
+  "metrics": {
+    "episodes": 52017,
+    "median_duration_min": 30.0,
+    "p90_duration_min": 185.0,
+    "share_ge_15": 0.7009439221792876,
+    "minutes_share_ge_60": 0.8048110058597125,
+    "median_recovery_min": 50.0,
+    "onset_drop_mph": 13.100000381469727,
+    "recovery_rise_mph": 17.60000228881836
+  },
+  "tables": {
+    "summary": "tables/q3_summary.csv",
+    "by_start_period": "tables/q3_by_start_period.csv",
+    "by_duration": "tables/q3_by_duration.csv",
+    "longest": "tables/q3_longest.csv"
+  },
+  "figures": [
+    "../figures/analytics/q3_duration.png",
+    "../figures/analytics/q3_recovery.png"
+  ],
+  "seconds": 45.7
+}

@@ -1,0 +1,5 @@
+kind,slowdown,speed-up,total,share
+traffic anomaly (corroborated),483650,106942,590592,0.7887116289132299
+isolated persistent,99206,43495,142701,0.1905713896523265
+unverifiable (no neighbours),7459,1658,9117,0.012175383210070433
+isolated spike,4904,1492,6396,0.008541598224373202

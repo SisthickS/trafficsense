@@ -1,0 +1,21 @@
+/ready                                                         direct p50     4.4 ms  proxy p50    16.4 ms      0.0 KB
+/api/v1/status                                                 direct p50    22.7 ms  proxy p50    28.3 ms      1.5 KB
+/api/v1/sensors?limit=50                                       direct p50    14.6 ms  proxy p50    21.6 ms     24.2 KB
+/api/v1/hotspots?limit=50                                      direct p50    13.2 ms  proxy p50    21.3 ms     15.8 KB
+/api/v1/predictions/latest?limit=50                            direct p50    16.1 ms  proxy p50    24.8 ms     12.4 KB
+/api/v1/analytics/questions/q5                                 direct p50     8.7 ms  proxy p50    13.4 ms      2.4 KB
+/api/v1/analytics/questions/q7/tables/edges?limit=500          direct p50    22.2 ms  proxy p50    28.1 ms     84.9 KB
+/api/v1/performance/overview                                   direct p50    26.9 ms  proxy p50    35.9 ms     42.1 KB
+/api/v1/status/database                                        direct p50    33.3 ms  proxy p50    46.9 ms      1.7 KB
+page /              p50    7.0 ms  html 24.7 KB
+page /analytics     p50    4.8 ms  html 11.6 KB
+page /hotspots      p50    5.9 ms  html 16.2 KB
+page /live          p50    5.9 ms  html 17.7 KB
+page /models        p50    6.1 ms  html 19.4 KB
+page /performance   p50    5.6 ms  html 12.1 KB
+page /data          p50    6.2 ms  html 11.5 KB
+page /status        p50    5.5 ms  html 17.5 KB
+throughput direct: {'workers': 8, 'requests': 200, 'rps': 109.1, 'p50_ms': 67.1, 'p95_ms': 100.2}
+throughput proxy : {'workers': 8, 'requests': 200, 'rps': 71.0, 'p50_ms': 102.8, 'p95_ms': 170.1}
+bundle: {'js_files': 21, 'js_total_kb': 2190, 'js_gzip_kb': 709, 'largest': [{'file': '3sd0tf_n8-ler.js', 'kb': 1434}, {'file': '1dy1fl0lvp0rp.js', 'kb': 224}, {'file': '3h-0eer3_icr8.js', 'kb': 155}]}
+wrote reports/final/dashboard_benchmark.json

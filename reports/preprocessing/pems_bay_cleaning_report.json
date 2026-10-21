@@ -1,0 +1,89 @@
+{
+  "config": {
+    "max_speed_mph": 100.0,
+    "stuck_run_slots": 72,
+    "stuck_congested_run_slots": 12,
+    "congestion_speed_mph": 35.0,
+    "ffill_limit_slots": 3
+  },
+  "input": {
+    "input_rows": 16937700,
+    "unparseable_timestamps": 0,
+    "off_grid_timestamps": 0,
+    "duplicate_rows": 0,
+    "grid_slots": 52116,
+    "sensors": 325,
+    "expected_rows": 16937700,
+    "first_ts_utc": "2017-01-01 08:00:00",
+    "last_ts_utc": "2017-07-01 06:55:00"
+  },
+  "output": {
+    "rows": 16937700,
+    "sensors": 325,
+    "distinct_ts_utc": 52116,
+    "first_ts_utc": "2017-01-01 08:00:00",
+    "last_ts_utc": "2017-07-01 06:55:00",
+    "grid_complete": true,
+    "quality_counts": {
+      "missing": 54970,
+      "observed": 16881199,
+      "imputed": 1531
+    },
+    "issue_counts": {
+      "stuck_sensor": 55980,
+      "non_positive": 521
+    },
+    "issue_by_final_quality": [
+      {
+        "issue": "non_positive",
+        "quality": "imputed",
+        "count": 521
+      },
+      {
+        "issue": "stuck_sensor",
+        "quality": "imputed",
+        "count": 1010
+      },
+      {
+        "issue": "stuck_sensor",
+        "quality": "missing",
+        "count": 54970
+      }
+    ],
+    "min_sensor_observed_share": 0.934377,
+    "max_sensor_missing_after_fill": 3346,
+    "sensors_with_missing_after_fill": 108,
+    "worst_sensors": [
+      {
+        "sensor_id": 402366,
+        "observed_share": 0.9343771586460972,
+        "missing": 3346
+      },
+      {
+        "sensor_id": 407190,
+        "observed_share": 0.9580934837669813,
+        "missing": 2161
+      },
+      {
+        "sensor_id": 400649,
+        "observed_share": 0.9636579937063474,
+        "missing": 1839
+      },
+      {
+        "sensor_id": 409525,
+        "observed_share": 0.9677642182822933,
+        "missing": 1657
+      },
+      {
+        "sensor_id": 400715,
+        "observed_share": 0.9691457517844808,
+        "missing": 1557
+      }
+    ]
+  },
+  "dataset": "pems-bay",
+  "output_path": "/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean",
+  "spark_version": "3.5.9",
+  "generated_at_utc": "2026-10-20T13:12:51+00:00",
+  "duration_seconds": 125.0
+}

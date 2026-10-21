@@ -1,0 +1,38 @@
+{
+  "qid": "q11",
+  "title": "Congestion recovery performance across sensors",
+  "question": "Which sensors recover slowly from congestion, how consistent is their recovery, and does recovery depend on time of day or episode length?",
+  "findings": [
+    "284 sensors have \u2265 10 sustained episodes. The median sensor recovers to free flow in **45 min**, but sensors range from 10 to 180 min (IQR across sensors 25\u201375 min).",
+    "**47 slow-recovery sensors** are \u2265 1 sd slower than average *and* slower than their neighbours; worst 407373: median 180 min (peers 105 min), 51.9% of episodes not recovered within 180 min.",
+    "Recovery depends on when an episode ends: median 180 min for episodes ending at 14:00 vs 15 min at 20:00 (hours with \u2265 200 episodes). Demand that remains high delays full recovery.",
+    "Longer episodes recover faster (episode-level Spearman \u03c1 = -0.37 between duration and recovery time), likely because long episodes typically end as evening demand falls, while short ones end inside busy periods that keep speeds below free flow. Across sensors, total congested time and median recovery have rank correlation -0.16.",
+    "Recovery is unpredictable at many sensors: median within-sensor IQR is 60 min."
+  ],
+  "implications": [
+    "**Recommendation:** prioritise the slow-recovery sensors for incident-clearance response and for a review of ramp metering or merge geometry: they lose the most time after the queue starts to clear.",
+    "The dashboard should show expected recovery time per sensor (its median) when an episode ends, not just 'cleared'.",
+    "End-hour effects show recovery is demand-driven; recovery forecasts should condition on time of day."
+  ],
+  "limitations": [
+    "Recovery is censored at 180 min and at missing data; censored episodes are counted as 180 min in medians.",
+    "Without incident logs, slow recovery cannot be attributed to incidents versus geometry."
+  ],
+  "metrics": {
+    "sensors": 284,
+    "median_sensor_recovery_min": 45.0,
+    "slow_recovery_sensors": 47,
+    "spearman_duration_recovery": -0.37186450197254833
+  },
+  "tables": {
+    "slow_recovery_sensors": "tables/q11_slow_recovery_sensors.csv",
+    "fastest_recovery": "tables/q11_fastest_recovery.csv",
+    "by_end_hour": "tables/q11_by_end_hour.csv",
+    "all_sensors": "tables/q11_all_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q11_recovery.png",
+    "../figures/analytics/q11_map.png"
+  ],
+  "seconds": 13.2
+}

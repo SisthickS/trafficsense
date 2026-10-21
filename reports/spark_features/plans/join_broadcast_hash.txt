@@ -1,0 +1,56 @@
+== Physical Plan ==
+AdaptiveSparkPlan (9)
++- Project (8)
+   +- BroadcastHashJoin Inner BuildRight (7)
+      :- Project (3)
+      :  +- Filter (2)
+      :     +- Scan parquet  (1)
+      +- BroadcastExchange (6)
+         +- Filter (5)
+            +- Scan parquet  (4)
+
+
+(1) Scan parquet 
+Output [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+Batched: true
+Location: InMemoryFileIndex [file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean]
+PushedFilters: [IsNotNull(sensor_id)]
+ReadSchema: struct<sensor_id:int,ts_utc:timestamp,speed_mph:float>
+
+(2) Filter
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+Condition : isnotnull(sensor_id#0)
+
+(3) Project
+Output [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+
+(4) Scan parquet 
+Output [4]: [sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+Batched: true
+Location: InMemoryFileIndex [file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/sensor_stats]
+PushedFilters: [IsNotNull(sensor_id)]
+ReadSchema: struct<sensor_id:int,latitude:double,longitude:double,ff_speed:float>
+
+(5) Filter
+Input [4]: [sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+Condition : isnotnull(sensor_id#3371)
+
+(6) BroadcastExchange
+Input [4]: [sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+Arguments: HashedRelationBroadcastMode(List(cast(input[0, int, false] as bigint)),false), [plan_id=1363]
+
+(7) BroadcastHashJoin
+Left keys [1]: [sensor_id#0]
+Right keys [1]: [sensor_id#3371]
+Join type: Inner
+Join condition: None
+
+(8) Project
+Output [7]: [sensor_id#0, ts_utc#1, speed_mph#4, ff_speed#3376, latitude#3372, longitude#3373, (cast(speed_mph#4 as double) / cast(ff_speed#3376 as double)) AS ratio#3401]
+Input [7]: [sensor_id#0, ts_utc#1, speed_mph#4, sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+
+(9) AdaptiveSparkPlan
+Output [7]: [sensor_id#0, ts_utc#1, speed_mph#4, ff_speed#3376, latitude#3372, longitude#3373, ratio#3401]
+Arguments: isFinalPlan=false
+

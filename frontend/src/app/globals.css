@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* TrafficSense theme: white surfaces on a lavender canvas, violet accents. */
+@theme {
+  --color-lav-50: #faf9ff;
+  --color-lav-100: #f3f1fe;
+  --color-lav-200: #e8e4fb;
+  --color-lav-300: #d6d0f7;
+  --color-lav-400: #b9b0f1;
+  --color-lav-500: #9a8eea;
+  --color-lav-600: #7a6adb;
+  --color-lav-700: #6050c0;
+  --color-lav-800: #483d96;
+  --color-lav-900: #2f2a63;
+  --color-ink: #1f1b3d;
+  --color-muted: #6c6993;
+  --font-sans: ui-sans-serif, "Segoe UI", Inter, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --shadow-soft: 0 1px 2px rgba(63, 52, 140, 0.06), 0 10px 28px -12px rgba(63, 52, 140, 0.18);
+  --shadow-nav: 0 1px 0 rgba(63, 52, 140, 0.08), 0 8px 24px -16px rgba(63, 52, 140, 0.25);
+}
+
+:root { color-scheme: light; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(154, 142, 234, 0.22), transparent 60%),
+    radial-gradient(900px 420px at -10% 0%, rgba(214, 208, 247, 0.55), transparent 55%),
+    var(--color-lav-50);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  a { color: inherit; text-decoration: none; }
+}
+
+/* thin scrollbars inside tables / strips */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-lav-300) transparent; }
+
+/* Plotly: keep the chart inside its card and use the app font */
+.js-plotly-plot .plotly .main-svg { font-family: var(--font-sans) !important; }
+.modebar { opacity: 0.35; transition: opacity 0.15s; }
+.js-plotly-plot:hover .modebar { opacity: 0.9; }
+
+@keyframes ts-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.ts-pulse { animation: ts-pulse 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .ts-pulse { animation: none; }
+}

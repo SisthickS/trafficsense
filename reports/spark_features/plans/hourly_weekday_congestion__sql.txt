@@ -1,0 +1,125 @@
+== Physical Plan ==
+AdaptiveSparkPlan (21)
++- == Final Plan ==
+   * Sort (13)
+   +- AQEShuffleRead (12)
+      +- ShuffleQueryStage (11), Statistics(sizeInBytes=960.0 B, rowCount=24)
+         +- Exchange (10)
+            +- * HashAggregate (9)
+               +- AQEShuffleRead (8)
+                  +- ShuffleQueryStage (7), Statistics(sizeInBytes=7.9 KiB, rowCount=144)
+                     +- Exchange (6)
+                        +- * HashAggregate (5)
+                           +- * Project (4)
+                              +- * Filter (3)
+                                 +- * ColumnarToRow (2)
+                                    +- Scan parquet  (1)
++- == Initial Plan ==
+   Sort (20)
+   +- Exchange (19)
+      +- HashAggregate (18)
+         +- Exchange (17)
+            +- HashAggregate (16)
+               +- Project (15)
+                  +- Filter (14)
+                     +- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [4]: [ts_local#2, speed_mph#4, quality#5, month#8]
+Batched: true
+Location: InMemoryFileIndex [file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean]
+PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)]
+ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+(2) ColumnarToRow [codegen id : 1]
+Input [4]: [ts_local#2, speed_mph#4, quality#5, month#8]
+
+(3) Filter [codegen id : 1]
+Input [4]: [ts_local#2, speed_mph#4, quality#5, month#8]
+Condition : ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+
+(4) Project [codegen id : 1]
+Output [2]: [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#944]
+Input [4]: [ts_local#2, speed_mph#4, quality#5, month#8]
+
+(5) HashAggregate [codegen id : 1]
+Input [2]: [speed_mph#4, _groupingexpression#944]
+Keys [1]: [_groupingexpression#944]
+Functions [3]: [partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)]
+Aggregate Attributes [5]: [sum#955, count#956L, sum#957, count#958L, count#959L]
+Results [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+
+(6) Exchange
+Input [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+Arguments: hashpartitioning(_groupingexpression#944, 48), ENSURE_REQUIREMENTS, [plan_id=3905]
+
+(7) ShuffleQueryStage
+Output [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+Arguments: 0
+
+(8) AQEShuffleRead
+Input [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+Arguments: coalesced
+
+(9) HashAggregate [codegen id : 2]
+Input [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+Keys [1]: [_groupingexpression#944]
+Functions [3]: [avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)]
+Aggregate Attributes [3]: [avg(cast((speed_mph#4 < 35.0) as int))#938, avg(speed_mph#4)#937, count(1)#936L]
+Results [4]: [_groupingexpression#944 AS hour#932, round((avg(cast((speed_mph#4 < 35.0) as int))#938 * 100.0), 2) AS congested_pct#933, round(avg(speed_mph#4)#937, 2) AS avg_speed#934, count(1)#936L AS readings#935L]
+
+(10) Exchange
+Input [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: rangepartitioning(hour#932 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3937]
+
+(11) ShuffleQueryStage
+Output [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: 1
+
+(12) AQEShuffleRead
+Input [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: coalesced
+
+(13) Sort [codegen id : 3]
+Input [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: [hour#932 ASC NULLS FIRST], true, 0
+
+(14) Filter
+Input [4]: [ts_local#2, speed_mph#4, quality#5, month#8]
+Condition : ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+
+(15) Project
+Output [2]: [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#944]
+Input [4]: [ts_local#2, speed_mph#4, quality#5, month#8]
+
+(16) HashAggregate
+Input [2]: [speed_mph#4, _groupingexpression#944]
+Keys [1]: [_groupingexpression#944]
+Functions [3]: [partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)]
+Aggregate Attributes [5]: [sum#955, count#956L, sum#957, count#958L, count#959L]
+Results [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+
+(17) Exchange
+Input [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+Arguments: hashpartitioning(_groupingexpression#944, 48), ENSURE_REQUIREMENTS, [plan_id=3801]
+
+(18) HashAggregate
+Input [6]: [_groupingexpression#944, sum#960, count#961L, sum#962, count#963L, count#964L]
+Keys [1]: [_groupingexpression#944]
+Functions [3]: [avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)]
+Aggregate Attributes [3]: [avg(cast((speed_mph#4 < 35.0) as int))#938, avg(speed_mph#4)#937, count(1)#936L]
+Results [4]: [_groupingexpression#944 AS hour#932, round((avg(cast((speed_mph#4 < 35.0) as int))#938 * 100.0), 2) AS congested_pct#933, round(avg(speed_mph#4)#937, 2) AS avg_speed#934, count(1)#936L AS readings#935L]
+
+(19) Exchange
+Input [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: rangepartitioning(hour#932 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3804]
+
+(20) Sort
+Input [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: [hour#932 ASC NULLS FIRST], true, 0
+
+(21) AdaptiveSparkPlan
+Output [4]: [hour#932, congested_pct#933, avg_speed#934, readings#935L]
+Arguments: isFinalPlan=true
+

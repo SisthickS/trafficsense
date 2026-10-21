@@ -1,0 +1,292 @@
+{
+  "selection": {
+    "cost_model": {
+      "fn": 10.0,
+      "fp": 1.0
+    },
+    "train_fraction": 0.08,
+    "train_sample": {
+      "rows": 890194,
+      "positives": 34099,
+      "positive_rate": 0.038305133487756604,
+      "w_pos": 13.05308073550544,
+      "w_neg": 0.5199154299464429,
+      "fraction": 0.08,
+      "seed": 42
+    },
+    "grid_candidates": 11,
+    "algorithms": {
+      "logistic_regression": {
+        "path": "/mnt/c/Users/ssis/Desktop/bdaa/data/models/pems_bay/ml_pipeline/logistic_regression",
+        "params": {
+          "regParam": 0.01
+        },
+        "threshold": 0.686,
+        "threshold_f1": 0.918,
+        "pr_auc": 0.9780578636384564,
+        "roc_auc": 0.9989287071843604,
+        "f1_point": {
+          "threshold": 0.918,
+          "tp": 80529.0,
+          "fp": 7038.0,
+          "fn": 4240.0,
+          "tn": 1569823.0,
+          "rows": 1661630.0,
+          "precision": 0.9196272568433314,
+          "recall": 0.9499817150137432,
+          "f1": 0.9345580726023581,
+          "false_alarm_rate": 0.004463297652741744,
+          "miss_rate": 0.05001828498625677,
+          "cost": 49438.0,
+          "cost_per_1000": 29.75271269777267
+        },
+        "cost_point": {
+          "threshold": 0.686,
+          "tp": 83832.0,
+          "fp": 17388.0,
+          "fn": 937.0,
+          "tn": 1559473.0,
+          "rows": 1661630.0,
+          "precision": 0.8282157676348548,
+          "recall": 0.9889464308886503,
+          "f1": 0.9014726677384146,
+          "false_alarm_rate": 0.011026970671479603,
+          "miss_rate": 0.011053569111349668,
+          "cost": 26758.0,
+          "cost_per_1000": 16.103464670233446
+        }
+      },
+      "decision_tree": {
+        "path": "/mnt/c/Users/ssis/Desktop/bdaa/data/models/pems_bay/ml_pipeline/decision_tree",
+        "params": {
+          "maxDepth": 10,
+          "minInstancesPerNode": 200
+        },
+        "threshold": 0.726,
+        "threshold_f1": 0.9,
+        "pr_auc": 0.9217973972956064,
+        "roc_auc": 0.9973281274249091,
+        "f1_point": {
+          "threshold": 0.9,
+          "tp": 80702.0,
+          "fp": 8249.0,
+          "fn": 4067.0,
+          "tn": 1568612.0,
+          "rows": 1661630.0,
+          "precision": 0.9072635495947207,
+          "recall": 0.9520225554153051,
+          "f1": 0.9291043057794152,
+          "false_alarm_rate": 0.005231279104499382,
+          "miss_rate": 0.04797744458469488,
+          "cost": 48919.0,
+          "cost_per_1000": 29.44036879449697
+        },
+        "cost_point": {
+          "threshold": 0.726,
+          "tp": 83971.0,
+          "fp": 19968.0,
+          "fn": 798.0,
+          "tn": 1556893.0,
+          "rows": 1661630.0,
+          "precision": 0.8078873185233647,
+          "recall": 0.990586181269096,
+          "f1": 0.889956970557687,
+          "false_alarm_rate": 0.012663132641367883,
+          "miss_rate": 0.009413818730903986,
+          "cost": 27948.0,
+          "cost_per_1000": 16.819628918591985
+        }
+      },
+      "random_forest": {
+        "path": "/mnt/c/Users/ssis/Desktop/bdaa/data/models/pems_bay/ml_pipeline/random_forest",
+        "params": {
+          "numTrees": 60,
+          "maxDepth": 8
+        },
+        "threshold": 0.572,
+        "threshold_f1": 0.918,
+        "pr_auc": 0.9695938414787262,
+        "roc_auc": 0.9987166980886275,
+        "f1_point": {
+          "threshold": 0.918,
+          "tp": 80108.0,
+          "fp": 7163.0,
+          "fn": 4661.0,
+          "tn": 1569698.0,
+          "rows": 1661630.0,
+          "precision": 0.9179223338795247,
+          "recall": 0.9450152768110984,
+          "f1": 0.931271797256452,
+          "false_alarm_rate": 0.004542569066011525,
+          "miss_rate": 0.0549847231889016,
+          "cost": 53773.0,
+          "cost_per_1000": 32.361596745364494
+        },
+        "cost_point": {
+          "threshold": 0.572,
+          "tp": 84008.0,
+          "fp": 19333.0,
+          "fn": 761.0,
+          "tn": 1557528.0,
+          "rows": 1661630.0,
+          "precision": 0.8129203317173243,
+          "recall": 0.9910226615861931,
+          "f1": 0.8931795226197438,
+          "false_alarm_rate": 0.012260433861957395,
+          "miss_rate": 0.008977338413806935,
+          "cost": 26943.0,
+          "cost_per_1000": 16.214801129011875
+        }
+      }
+    },
+    "best_algorithm": "logistic_regression",
+    "best_path": "/mnt/c/Users/ssis/Desktop/bdaa/data/models/pems_bay/ml_pipeline/best",
+    "reload_check": {
+      "ok": true,
+      "checks": {
+        "stage_count": true,
+        "stage_types_match_metadata": true,
+        "reference_rows_found": true,
+        "probabilities_identical": true,
+        "predict_adds_alert": true
+      },
+      "reference_rows": 170,
+      "max_abs_probability_diff": 4.99491526698842e-11,
+      "threshold": 0.686,
+      "stages": [
+        "ImputerModel",
+        "StringIndexerModel",
+        "OneHotEncoderModel",
+        "VectorAssembler",
+        "StandardScalerModel",
+        "VectorAssembler",
+        "LogisticRegressionModel"
+      ]
+    }
+  },
+  "candidates": [
+    {
+      "algorithm": "logistic_regression",
+      "params": "{\"regParam\": 0.0001}",
+      "train_s": 47.31717038154602,
+      "val_pr_auc": 0.9756848341520238,
+      "val_roc_auc": 0.9988785353232217,
+      "val_f1": 0.936235035554186,
+      "val_cost_per_1000": 15.455305934534163,
+      "cost_threshold": 0.714,
+      "selected": false
+    },
+    {
+      "algorithm": "logistic_regression",
+      "params": "{\"regParam\": 0.001}",
+      "train_s": 39.23181653022766,
+      "val_pr_auc": 0.9764061046552291,
+      "val_roc_auc": 0.9988852871278425,
+      "val_f1": 0.9361285765565476,
+      "val_cost_per_1000": 15.626222444226451,
+      "cost_threshold": 0.692,
+      "selected": false
+    },
+    {
+      "algorithm": "logistic_regression",
+      "params": "{\"regParam\": 0.01}",
+      "train_s": 35.929773807525635,
+      "val_pr_auc": 0.9780578636384564,
+      "val_roc_auc": 0.9989287071843604,
+      "val_f1": 0.9345580726023581,
+      "val_cost_per_1000": 16.103464670233446,
+      "cost_threshold": 0.686,
+      "selected": true
+    },
+    {
+      "algorithm": "decision_tree",
+      "params": "{\"maxDepth\": 6, \"minInstancesPerNode\": 50}",
+      "train_s": 39.26270008087158,
+      "val_pr_auc": 0.9213181009012692,
+      "val_roc_auc": 0.9967748181971049,
+      "val_f1": 0.9291043057794152,
+      "val_cost_per_1000": 17.089845513140713,
+      "cost_threshold": 0.726,
+      "selected": false
+    },
+    {
+      "algorithm": "decision_tree",
+      "params": "{\"maxDepth\": 6, \"minInstancesPerNode\": 200}",
+      "train_s": 37.722900390625,
+      "val_pr_auc": 0.9210656659023125,
+      "val_roc_auc": 0.996821407482999,
+      "val_f1": 0.9291043057794152,
+      "val_cost_per_1000": 17.376311212484126,
+      "cost_threshold": 0.726,
+      "selected": false
+    },
+    {
+      "algorithm": "decision_tree",
+      "params": "{\"maxDepth\": 10, \"minInstancesPerNode\": 50}",
+      "train_s": 39.92028594017029,
+      "val_pr_auc": 0.9209823433478147,
+      "val_roc_auc": 0.9962694036632643,
+      "val_f1": 0.9291043057794152,
+      "val_cost_per_1000": 16.878607150809746,
+      "cost_threshold": 0.714,
+      "selected": false
+    },
+    {
+      "algorithm": "decision_tree",
+      "params": "{\"maxDepth\": 10, \"minInstancesPerNode\": 200}",
+      "train_s": 39.01384353637695,
+      "val_pr_auc": 0.9217973972956064,
+      "val_roc_auc": 0.9973281274249091,
+      "val_f1": 0.9291043057794152,
+      "val_cost_per_1000": 16.819628918591985,
+      "cost_threshold": 0.726,
+      "selected": true
+    },
+    {
+      "algorithm": "random_forest",
+      "params": "{\"numTrees\": 30, \"maxDepth\": 8}",
+      "train_s": 52.305970430374146,
+      "val_pr_auc": 0.9686100341674824,
+      "val_roc_auc": 0.9986398552352312,
+      "val_f1": 0.9304906779907508,
+      "val_cost_per_1000": 16.351413973026485,
+      "cost_threshold": 0.546,
+      "selected": false
+    },
+    {
+      "algorithm": "random_forest",
+      "params": "{\"numTrees\": 30, \"maxDepth\": 12}",
+      "train_s": 63.025949478149414,
+      "val_pr_auc": 0.9679099331531184,
+      "val_roc_auc": 0.9986721846029943,
+      "val_f1": 0.9316081115689973,
+      "val_cost_per_1000": 16.10767740110614,
+      "cost_threshold": 0.55,
+      "selected": false
+    },
+    {
+      "algorithm": "random_forest",
+      "params": "{\"numTrees\": 60, \"maxDepth\": 8}",
+      "train_s": 73.93700623512268,
+      "val_pr_auc": 0.9695938414787262,
+      "val_roc_auc": 0.9987166980886275,
+      "val_f1": 0.931271797256452,
+      "val_cost_per_1000": 16.214801129011875,
+      "cost_threshold": 0.572,
+      "selected": true
+    },
+    {
+      "algorithm": "random_forest",
+      "params": "{\"numTrees\": 60, \"maxDepth\": 12}",
+      "train_s": 96.84781384468079,
+      "val_pr_auc": 0.9676398289702389,
+      "val_roc_auc": 0.9986952301566432,
+      "val_f1": 0.932445708077621,
+      "val_cost_per_1000": 16.0174045966912,
+      "cost_threshold": 0.526,
+      "selected": false
+    }
+  ],
+  "seconds": 1037.2028136253357,
+  "quick": false
+}

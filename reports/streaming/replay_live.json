@@ -1,0 +1,21 @@
+{
+  "topic": "traffic.speed.events",
+  "start": "2017-06-05T12:00:00Z",
+  "hours": 1.0,
+  "unique_events": 3900,
+  "messages_sent": 3900,
+  "delivered": 3900,
+  "delivery_errors": 0,
+  "normal": 3900,
+  "duplicates": 0,
+  "late": 0,
+  "malformed": 0,
+  "speedup": 60.0,
+  "events_per_sec_target": 0.0,
+  "wall_seconds": 55.01,
+  "achieved_msgs_per_sec": 70.9,
+  "achieved_speedup": 65.4,
+  "first_event_ts": "2017-06-05 12:00:00",
+  "last_event_ts": "2017-06-05 12:55:00",
+  "seed": 42
+}

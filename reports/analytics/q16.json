@@ -1,0 +1,50 @@
+{
+  "qid": "q16",
+  "title": "Five-minute-ahead congestion prediction: comparative metrics",
+  "question": "How well do Spark MLlib models predict whether a sensor will be congested in the next 5 minutes, compared with simple baselines, and where do they add value?",
+  "findings": [
+    "Best model on validation: **Logistic regression**. Test F1 **0.931** (95% CI 0.927\u20130.934), PR-AUC 0.973, ROC-AUC 0.999, precision 0.912, recall 0.950 at threshold 0.924.",
+    "It beats persistence (F1 0.922) by **+0.008** F1 (95% CI +0.007 to +0.009; better in 100.0% of bootstrap resamples), a statistically clear gain.",
+    "The value is in **state changes**: the model catches 37.9% of congestion onsets and correctly predicts 6.5% of clearances (persistence: 0% and 0% by construction); transition accuracy 22.2%, at a false-alarm rate of 0.08% on stable free-flow rows.",
+    "The historical-profile baseline alone reaches F1 0.714 (PR-AUC 0.740): recurrence helps, but live state dominates at 5 minutes.",
+    "Model ranking by test F1: Logistic regression 0.931, Gradient-boosted trees 0.929, Random forest 0.927, Decision tree 0.924. Training on 890,194 rows took Logistic regression 19s, Decision tree 7s, Random forest 47s, Gradient-boosted trees 89s."
+  ],
+  "implications": [
+    "Deploy **Logistic regression** in the streaming pipeline (saved as a Spark PipelineModel at `data/models/pems_bay/best_model`) with threshold 0.924. Report the persistence baseline beside it on the dashboard so users can judge its added value.",
+    "Judge the model on onset/clearance metrics, not overall accuracy: on stable rows persistence is almost always right.",
+    "Class weights shift probabilities upwards; use the tuned threshold, and do not read raw probabilities as calibrated risks (see Q18 calibration)."
+  ],
+  "limitations": [
+    "Trained on a 8% sample of the training period to fit a 7.6 GB laptop; more data and hyper-parameter search (CrossValidator with time-blocked folds) may improve the tree models.",
+    "PR-AUC/ROC-AUC are computed from a 500-bucket histogram of probabilities (the same approximation MLlib uses with numBins).",
+    "One random seed per model; the bootstrap captures test-day variability, not training variability."
+  ],
+  "metrics": {
+    "logistic_regression_train_s": 19.37440037727356,
+    "decision_tree_train_s": 7.404202938079834,
+    "random_forest_train_s": 47.36727499961853,
+    "gbt_train_s": 89.48499774932861,
+    "best_model": "logistic_regression",
+    "test_f1": 0.9305683827688166,
+    "test_pr_auc": 0.9733624472147774,
+    "persistence_f1": 0.9224884368355291,
+    "delta_f1_vs_persistence": 0.008079945933287536,
+    "delta_ci": [
+      0.007247494431768545,
+      0.008821536354075002
+    ],
+    "onset_recall": 0.3786050895381715,
+    "clearance_accuracy": 0.06515180086743352
+  },
+  "tables": {
+    "test_metrics": "tables/q16_test_metrics.csv",
+    "val_metrics": "tables/q16_val_metrics.csv",
+    "importances": "tables/q16_importances.csv",
+    "training": "tables/q16_training.csv"
+  },
+  "figures": [
+    "../figures/analytics/q16_pr_and_bars.png",
+    "../figures/analytics/q16_confusion.png"
+  ],
+  "seconds": 322.1
+}

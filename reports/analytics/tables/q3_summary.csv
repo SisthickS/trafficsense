@@ -1,0 +1,2 @@
+episodes,sensors,median_min,mean_min,p75_min,p90_min,p99_min,max_min,share_ge_15min,share_ge_60min,minutes_in_ge_60min_episodes,median_recovery_min,p90_recovery_min,share_not_recovered_3h
+52017,319,30.0,63.95899417498126,90.0,185.0,325.0,805,0.7009439221792876,0.34373377934136917,0.8048110058597125,50.0,145.0,0.1723282772939616

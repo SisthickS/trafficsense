@@ -1,0 +1,47 @@
+{
+  "qid": "q17",
+  "title": "Feature-group contribution and ablation",
+  "question": "Which groups of engineered features actually drive the 5-minute congestion predictions, and which are redundant?",
+  "findings": [
+    "With all 41 features the compact GBT reaches PR-AUC 0.978, F1 0.934 and onset recall 31.1% on the held-out validation days.",
+    "Largest contribution: **lag** (removing it lowers PR-AUC by 0.004 and onset recall by 9.3 pp), followed by profile (0.001 PR-AUC).",
+    "For predicting **onsets**, the most important group is **lag** (\u22129.3 pp onset recall when removed).",
+    "Groups whose removal changes PR-AUC by less than 0.005: lag, profile, current, temporal, sensor, graph, rolling. They are redundant given the others, because their information is also carried by correlated features.",
+    "A minimal model with only the current state and lags (13 features) reaches PR-AUC 0.977 (-0.001 vs all) and onset recall 32.0% (+0.9 pp).",
+    "Built-in importance (Decision tree, Q16) ranks current (95.9%) and lag (2.4%) highest. Importance measures how often a group is used, ablation how much it is irreplaceable; the two need not agree when features are correlated."
+  ],
+  "implications": [
+    "Keep the lag and profile groups in the streaming feature pipeline; they carry most of the signal.",
+    "Redundant groups (lag, profile, current, temporal, sensor, graph, rolling) could be dropped from the streaming job to cut latency and state size, with negligible accuracy loss.",
+    "Ablation is the evidence to quote in the report; built-in importances are biased towards high-cardinality, frequently split features."
+  ],
+  "limitations": [
+    "Ablation uses a compact GBT on a 3% sample, chosen for runtime; absolute metrics are lower than Q16's full models, but all variants are compared under identical conditions.",
+    "Leave-one-group-out underestimates groups whose information is duplicated elsewhere (correlated features)."
+  ],
+  "metrics": {
+    "full_pr_auc": 0.9781873198633128,
+    "top_group": "lag",
+    "top_contribution_pr_auc": 0.0035756280279830577,
+    "negligible_groups": [
+      "lag",
+      "profile",
+      "current",
+      "temporal",
+      "sensor",
+      "graph",
+      "rolling"
+    ],
+    "minimal_pr_auc": 0.9766977634300124
+  },
+  "tables": {
+    "ablation": "tables/q17_ablation.csv",
+    "variants": "tables/q17_variants.csv",
+    "importance_by_group": "tables/q17_importance_by_group.csv",
+    "groups": "tables/q17_groups.csv"
+  },
+  "figures": [
+    "../figures/analytics/q17_ablation.png"
+  ],
+  "seconds": 241.1
+}

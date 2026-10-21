@@ -1,0 +1,500 @@
+{
+  "name": "dataframe_sql",
+  "title": "DataFrame API & Spark SQL demonstration",
+  "environment": {
+    "generated_at_utc": "2026-10-20T11:29:11+00:00",
+    "spark_version": "3.5.9",
+    "python": "3.11.17",
+    "master": "local[*]",
+    "default_parallelism": 12,
+    "cpu_count": 12,
+    "ram_gb": 7.6,
+    "driver_memory": "3g",
+    "shuffle_partitions": "48",
+    "aqe_enabled": "true",
+    "scratch_dir": "/home/wsluser/.cache/trafficsense/bench",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43"
+  },
+  "headline": [
+    "Schema inference on CSV cost 4 Spark jobs vs 2 with an explicit schema (9.7s vs 0.8s), and it guessed different types for 2 column(s).",
+    "Lazy evaluation: building a 6-step transformation chain launched 0 jobs in 121 ms; the count() action launched 3 job(s) and took 1.5s.",
+    "Joins: broadcast hint \u2192 BroadcastHashJoin, merge hint \u2192 SortMergeJoin; 6 sensor(s) were never congested (left anti), 319 were (left semi).",
+    "Window functions found 52,010 congestion onsets with lag(); row_number, rank/dense_rank, running totals and 30-min rangeBetween windows demonstrated.",
+    "DataFrame vs SQL: 3/3 query pairs have identical optimized plans, 3/3 identical physical plans, 3/3 identical results."
+  ],
+  "schemas": {
+    "parquet_schema_ddl": "struct<sensor_id:int,ts_utc:timestamp,ts_local:timestamp,speed_raw:float,speed_mph:float,quality:string,issue:string,date_local:date,month:string>",
+    "csv_rows": 2901600,
+    "csv_infer": {
+      "seconds": 9.741,
+      "jobs": 4,
+      "input_bytes": 517322172
+    },
+    "csv_explicit": {
+      "seconds": 0.821,
+      "jobs": 2,
+      "input_bytes": 258626270
+    },
+    "type_diff": [
+      {
+        "column": "sensor_id",
+        "explicit": "int",
+        "inferred": "int"
+      },
+      {
+        "column": "ts_utc",
+        "explicit": "timestamp",
+        "inferred": "timestamp"
+      },
+      {
+        "column": "ts_local",
+        "explicit": "timestamp",
+        "inferred": "timestamp"
+      },
+      {
+        "column": "speed_raw",
+        "explicit": "float",
+        "inferred": "double"
+      },
+      {
+        "column": "speed_mph",
+        "explicit": "float",
+        "inferred": "double"
+      },
+      {
+        "column": "quality",
+        "explicit": "string",
+        "inferred": "string"
+      },
+      {
+        "column": "issue",
+        "explicit": "string",
+        "inferred": "string"
+      },
+      {
+        "column": "date_local",
+        "explicit": "date",
+        "inferred": "date"
+      }
+    ]
+  },
+  "lazy": {
+    "lazy_seconds": 0.121,
+    "lazy_jobs": 0,
+    "action_seconds": 1.468,
+    "action_jobs": 3,
+    "action_shuffle_bytes": 417851,
+    "chain_rows": 7800,
+    "physical_nodes": [
+      "Sort",
+      "Exchange",
+      "HashAggregate",
+      "Exchange",
+      "HashAggregate",
+      "Project",
+      "Filter",
+      "Scan parquet"
+    ],
+    "exchanges": 2,
+    "actions": {
+      "count": 16937700,
+      "first": {
+        "sensor_id": "400172",
+        "ts_local": "2017-06-01 00:00:00",
+        "speed_mph": 67.9
+      },
+      "take_3": [
+        {
+          "sensor_id": 400586,
+          "hour": 17,
+          "congested_rate": 0.711,
+          "avg_speed": 32.013
+        },
+        {
+          "sensor_id": 400895,
+          "hour": 17,
+          "congested_rate": 0.709,
+          "avg_speed": 29.549
+        },
+        {
+          "sensor_id": 400586,
+          "hour": 16,
+          "congested_rate": 0.707,
+          "avg_speed": 32.36
+        }
+      ],
+      "collect_quality": {
+        "missing": 54970,
+        "observed": 16881199,
+        "imputed": 1531
+      },
+      "describe": "+-------+------------------+\n|summary|speed_mph         |\n+-------+------------------+\n|count  |16882730          |\n|mean   |62.611642116279434|\n|stddev |9.591030172545086 |\n|min    |3.0               |\n|max    |85.1              |\n+-------+------------------+",
+      "show_chain": "+---------+----+------------------+------------------+\n|sensor_id|hour|congested_rate    |avg_speed         |\n+---------+----+------------------+------------------+\n|400586   |17  |0.7108655616942909|32.013351740977605|\n|400895   |17  |0.7087962962962963|29.548564789471804|\n|400586   |16  |0.7071823204419889|32.35953042388621 |\n|401811   |17  |0.7067219152854513|34.85727439488715 |\n|400172   |17  |0.7053406998158379|32.91984344758162 |\n+---------+----+------------------+------------------+\nonly showing top 5 rows",
+      "toPandas_shape": [
+        5,
+        4
+      ]
+    }
+  },
+  "joins": {
+    "inner": {
+      "rows": 325,
+      "top": [
+        {
+          "sensor_id": 400586,
+          "latitude": 37.376835,
+          "longitude": -121.942537,
+          "congested_pct": 17.91
+        },
+        {
+          "sensor_id": 400172,
+          "latitude": 37.376264,
+          "longitude": -121.939712,
+          "congested_pct": 17.78
+        },
+        {
+          "sensor_id": 400895,
+          "latitude": 37.380958,
+          "longitude": -121.960741,
+          "congested_pct": 17.76
+        },
+        {
+          "sensor_id": 400069,
+          "latitude": 37.385758,
+          "longitude": -121.977493,
+          "congested_pct": 14.58
+        },
+        {
+          "sensor_id": 400971,
+          "latitude": 37.368669,
+          "longitude": -121.901336,
+          "congested_pct": 14.03
+        }
+      ],
+      "nodes": [
+        "Sort",
+        "Exchange",
+        "Project",
+        "BroadcastHashJoin",
+        "HashAggregate",
+        "Exchange",
+        "HashAggregate",
+        "Project",
+        "Filter",
+        "Scan parquet",
+        "BroadcastExchange",
+        "Filter",
+        "Scan parquet"
+      ]
+    },
+    "left_outer": {
+      "rows": 325,
+      "sensors_with_zero": 32,
+      "month": "2017-01"
+    },
+    "left_semi": {
+      "rows": 319
+    },
+    "left_anti": {
+      "rows": 6,
+      "examples": [
+        400160,
+        400804,
+        400842,
+        401391,
+        401908
+      ]
+    },
+    "self_join": {
+      "edges": 2369,
+      "two_hop_pairs": 4709
+    },
+    "broadcast_hint": {
+      "join_node": "BroadcastHashJoin"
+    },
+    "merge_hint": {
+      "join_node": "SortMergeJoin"
+    }
+  },
+  "windows": {
+    "onsets_total": 52010,
+    "sample": {
+      "sensor_id": 407361,
+      "date": "2017-05-07"
+    },
+    "lag_lead_rows": [
+      {
+        "ts_local": "2017-05-07 10:00:00",
+        "prev_speed": 55.3,
+        "speed_mph": 42.3,
+        "next_speed": 40.3,
+        "delta_5m": -13.0
+      },
+      {
+        "ts_local": "2017-05-07 10:05:00",
+        "prev_speed": 42.3,
+        "speed_mph": 40.3,
+        "next_speed": 34.6,
+        "delta_5m": -2.0
+      },
+      {
+        "ts_local": "2017-05-07 10:10:00",
+        "prev_speed": 40.3,
+        "speed_mph": 34.6,
+        "next_speed": 32.4,
+        "delta_5m": -5.7
+      },
+      {
+        "ts_local": "2017-05-07 10:45:00",
+        "prev_speed": 35.1,
+        "speed_mph": 36.4,
+        "next_speed": 36.5,
+        "delta_5m": 1.3
+      },
+      {
+        "ts_local": "2017-05-07 10:50:00",
+        "prev_speed": 36.4,
+        "speed_mph": 36.5,
+        "next_speed": 35.8,
+        "delta_5m": 0.1
+      },
+      {
+        "ts_local": "2017-05-07 10:55:00",
+        "prev_speed": 36.5,
+        "speed_mph": 35.8,
+        "next_speed": 33.5,
+        "delta_5m": -0.7
+      }
+    ],
+    "row_number_top3_slowest": [
+      {
+        "rn": "1",
+        "ts_local": "2017-05-07 18:05:00",
+        "speed_mph": 25.2
+      },
+      {
+        "rn": "2",
+        "ts_local": "2017-05-07 13:10:00",
+        "speed_mph": 28.7
+      },
+      {
+        "rn": "3",
+        "ts_local": "2017-05-07 13:25:00",
+        "speed_mph": 28.8
+      }
+    ],
+    "rank_dense_rank": [
+      {
+        "date_local": "2017-05-07",
+        "sensor_id": "407361",
+        "congested_minutes": "350",
+        "rank": "1",
+        "dense_rank": "1"
+      },
+      {
+        "date_local": "2017-05-07",
+        "sensor_id": "407339",
+        "congested_minutes": "170",
+        "rank": "2",
+        "dense_rank": "2"
+      },
+      {
+        "date_local": "2017-05-07",
+        "sensor_id": "407155",
+        "congested_minutes": "55",
+        "rank": "3",
+        "dense_rank": "3"
+      },
+      {
+        "date_local": "2017-05-07",
+        "sensor_id": "407157",
+        "congested_minutes": "45",
+        "rank": "4",
+        "dense_rank": "4"
+      },
+      {
+        "date_local": "2017-05-07",
+        "sensor_id": "407153",
+        "congested_minutes": "40",
+        "rank": "5",
+        "dense_rank": "5"
+      }
+    ],
+    "running_and_range": [
+      {
+        "ts_local": "2017-05-07 00:00:00",
+        "speed_mph": 67.4,
+        "roll_avg_30min": 67.4,
+        "cum_congested_min": "0"
+      },
+      {
+        "ts_local": "2017-05-07 03:00:00",
+        "speed_mph": 68.0,
+        "roll_avg_30min": 68.0,
+        "cum_congested_min": "0"
+      },
+      {
+        "ts_local": "2017-05-07 06:00:00",
+        "speed_mph": 67.8,
+        "roll_avg_30min": 66.8,
+        "cum_congested_min": "0"
+      },
+      {
+        "ts_local": "2017-05-07 09:00:00",
+        "speed_mph": 61.5,
+        "roll_avg_30min": 65.7,
+        "cum_congested_min": "0"
+      },
+      {
+        "ts_local": "2017-05-07 12:00:00",
+        "speed_mph": 32.1,
+        "roll_avg_30min": 33.6,
+        "cum_congested_min": "80"
+      },
+      {
+        "ts_local": "2017-05-07 15:00:00",
+        "speed_mph": 36.9,
+        "roll_avg_30min": 36.2,
+        "cum_congested_min": "205"
+      },
+      {
+        "ts_local": "2017-05-07 18:00:00",
+        "speed_mph": 35.1,
+        "roll_avg_30min": 34.2,
+        "cum_congested_min": "255"
+      },
+      {
+        "ts_local": "2017-05-07 21:00:00",
+        "speed_mph": 60.2,
+        "roll_avg_30min": 55.8,
+        "cum_congested_min": "350"
+      }
+    ],
+    "daily_congested_minutes_sample_day": 350
+  },
+  "sql": {
+    "catalog": [
+      {
+        "name": "clean",
+        "database": null,
+        "temporary": true
+      },
+      {
+        "name": "sensors",
+        "database": null,
+        "temporary": true
+      }
+    ],
+    "global_temp_rows": 325,
+    "pairs": {
+      "hourly_weekday_congestion": {
+        "same_optimized_plan": true,
+        "same_physical_plan": true,
+        "same_result": true,
+        "rows": 24,
+        "preview": [
+          {
+            "hour": 0,
+            "congested_pct": 0.03,
+            "avg_speed": 66.58,
+            "readings": 506077
+          },
+          {
+            "hour": 1,
+            "congested_pct": 0.04,
+            "avg_speed": 66.36,
+            "readings": 505697
+          },
+          {
+            "hour": 2,
+            "congested_pct": 0.05,
+            "avg_speed": 66.26,
+            "readings": 505962
+          },
+          {
+            "hour": 3,
+            "congested_pct": 0.04,
+            "avg_speed": 66.26,
+            "readings": 505916
+          },
+          {
+            "hour": 4,
+            "congested_pct": 0.03,
+            "avg_speed": 66.66,
+            "readings": 505873
+          }
+        ],
+        "sql": "SELECT hour(ts_local) AS hour, round(avg(CAST(speed_mph < 35 AS INT)) * 100, 2) AS congested_pct, round(avg(speed_mph), 2) AS avg_speed, count(1) AS readings FROM clean WHERE quality = 'observed' AND dayofweek(ts_local) BETWEEN 2 AND 6 GROUP BY hour(ts_local) ORDER BY hour"
+      },
+      "congestion_onsets_window": {
+        "same_optimized_plan": true,
+        "same_physical_plan": true,
+        "same_result": true,
+        "rows": 10,
+        "preview": [
+          {
+            "sensor_id": 407361,
+            "onsets": 682
+          },
+          {
+            "sensor_id": 407360,
+            "onsets": 609
+          },
+          {
+            "sensor_id": 400971,
+            "onsets": 582
+          },
+          {
+            "sensor_id": 400158,
+            "onsets": 551
+          },
+          {
+            "sensor_id": 407339,
+            "onsets": 537
+          }
+        ],
+        "sql": "SELECT sensor_id, count(1) AS onsets FROM (SELECT sensor_id, ts_utc, speed_mph, LAG(speed_mph) OVER (PARTITION BY sensor_id ORDER BY ts_utc) AS prev_speed FROM clean) WHERE speed_mph < 35 AND prev_speed >= 35 GROUP BY sensor_id ORDER BY onsets DESC, sensor_id LIMIT 10"
+      },
+      "most_congested_sensors_join": {
+        "same_optimized_plan": true,
+        "same_physical_plan": true,
+        "same_result": true,
+        "rows": 5,
+        "preview": [
+          {
+            "sensor_id": 400586,
+            "latitude": 37.376835,
+            "longitude": -121.942537,
+            "congested_pct": 17.91
+          },
+          {
+            "sensor_id": 400172,
+            "latitude": 37.376264,
+            "longitude": -121.939712,
+            "congested_pct": 17.78
+          },
+          {
+            "sensor_id": 400895,
+            "latitude": 37.380958,
+            "longitude": -121.960741,
+            "congested_pct": 17.76
+          },
+          {
+            "sensor_id": 400069,
+            "latitude": 37.385758,
+            "longitude": -121.977493,
+            "congested_pct": 14.58
+          },
+          {
+            "sensor_id": 400971,
+            "latitude": 37.368669,
+            "longitude": -121.901336,
+            "congested_pct": 14.03
+          }
+        ],
+        "sql": "SELECT sensor_id, latitude, longitude, round(rate * 100, 2) AS congested_pct FROM (SELECT sensor_id, avg(CAST(speed_mph < 35 AS INT)) AS rate FROM clean WHERE quality = 'observed' GROUP BY sensor_id) c JOIN sensors USING (sensor_id) ORDER BY congested_pct DESC, sensor_id LIMIT 5"
+      }
+    }
+  },
+  "data_description": "cleaned PEMS-BAY readings (all 6 months, 16,937,700 rows)"
+}

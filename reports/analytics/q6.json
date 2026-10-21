@@ -1,0 +1,49 @@
+{
+  "qid": "q6",
+  "title": "Congestion by road characteristics",
+  "question": "Do sensors with different road characteristics (design speed, network density, merge/diverge position, corridor) experience systematically different congestion?",
+  "findings": [
+    "**None of the derived characteristics explains much of the congestion differences**: the largest \u03b7\u00b2 is 0.021 (Free-flow speed band), a small effect, and all four lie between 0.016 and 0.021. Congestion is site-specific rather than determined by these coarse attributes.",
+    "Free-flow speed band: 12.5% PM-peak congestion in the lowest band vs 16.5% in the highest; Spearman \u03c1 = -0.03, i.e. no meaningful monotonic relation.",
+    "Network density: Spearman \u03c1 = -0.02 between graph degree and PM-peak congestion (no meaningful relation); the highest graph-position group is 'diverge-like (out > in)'.",
+    "KMeans found 3 corridors (silhouette 0.61); most congested: C3 NW (9 km), least congested: C2 S (7 km) (\u03b7\u00b2 0.016)."
+  ],
+  "implications": [
+    "Coarse sensor-level characteristics explain little; per-sensor history features (`ff_speed`, `sensor_congested_rate`, slot profile) and live features capture site effects directly. Adding characteristic groups as model features is unlikely to help.",
+    "Corridor membership remains useful for **reporting** (per-corridor dashboard views and evaluation), even if it adds little predictive power."
+  ],
+  "limitations": [
+    "**No true road attributes**: PEMS-BAY lacks lane counts, functional class, ramp locations and volumes, so these are proxies. With PeMS station metadata (lanes, freeway, direction) this analysis can be redone directly.",
+    "Graph degree reflects how many sensors lie within the DCRNN distance threshold, so it measures sensor density, not road topology.",
+    "\u03b7\u00b2 is descriptive (no causal claim); groups are unbalanced in size."
+  ],
+  "metrics": {
+    "best_k": 3,
+    "silhouette": {
+      "3": 0.6136015126162793,
+      "4": 0.5809060973813296,
+      "5": 0.5820964875786739,
+      "6": 0.5516595923707001
+    },
+    "spearman_ff_pm": -0.03475927294397537,
+    "spearman_degree_pm": -0.023111571703399374,
+    "strongest_characteristic": "Free-flow speed band",
+    "eta_squared": {
+      "Free-flow speed band": 0.021276623439412855,
+      "Graph position": 0.017959587220016657,
+      "Network density": 0.016177177770940784,
+      "Corridor (KMeans)": 0.01551265511253073
+    }
+  },
+  "tables": {
+    "effects": "tables/q6_effects.csv",
+    "groups": "tables/q6_groups.csv",
+    "kmeans_silhouette": "tables/q6_kmeans_silhouette.csv",
+    "sensors": "tables/q6_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q6_boxplots.png",
+    "../figures/analytics/q6_corridors_map.png"
+  ],
+  "seconds": 14.0
+}

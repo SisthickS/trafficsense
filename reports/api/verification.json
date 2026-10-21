@@ -1,0 +1,656 @@
+{
+  "passed": true,
+  "database": "trafficsense",
+  "seconds": 59.8,
+  "checks": [
+    {
+      "check": "server process starts and becomes ready",
+      "ok": true,
+      "detail": "pid 2796, ready after 3.4s"
+    },
+    {
+      "check": "MongoDB holds the loaded collections",
+      "ok": true,
+      "detail": "{\"sensor_metadata\": 325, \"settings\": 0, \"congestion_hotspots\": 325, \"analysis_results\": 95, \"model_evaluations\": 5, \"traffic_predictions\": 23004, \"stream_metrics\": 521, \"pipeline_runs\": 30}"
+    },
+    {
+      "check": "CREATE sensor -> 201 + Location + ETag",
+      "ok": true,
+      "detail": "version 1"
+    },
+    {
+      "check": "UPDATE (PATCH) changes only the given fields",
+      "ok": true,
+      "detail": "version 2"
+    },
+    {
+      "check": "UPDATE (PUT + If-Match) replaces the editable fields",
+      "ok": true,
+      "detail": "version 3, description reset"
+    },
+    {
+      "check": "stale If-Match is refused (412)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "read back after the writes (GET)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "DELETE sensor -> 204, then GET and DELETE -> 404",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "validation errors are 422 with field details",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "duplicate create is 409",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "a real dataset sensor can be edited",
+      "ok": true,
+      "detail": "sensor 400001"
+    },
+    {
+      "check": "CREATE setting (PUT) -> 201",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "UPDATE setting (PUT + If-Match) -> 200",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "setting validation: out of range -> 422",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "CREATE custom setting (POST) -> 201",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "PATCH setting",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "DELETE setting -> 204, then 404",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "settings change API behaviour",
+      "ok": true,
+      "detail": "watch-list size 5; 2 sensors at/above 0.6"
+    },
+    {
+      "check": "sensor document exists in MongoDB with the API's final values",
+      "ok": true,
+      "detail": "version 3, GeoJSON location updated"
+    },
+    {
+      "check": "edited dataset sensor stored; read-only stats untouched",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "setting document exists in MongoDB",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "deleted sensor is gone from MongoDB",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "server process killed (SIGKILL, no graceful shutdown)",
+      "ok": true,
+      "detail": "exit code -9"
+    },
+    {
+      "check": "a NEW server process starts",
+      "ok": true,
+      "detail": "pid 2872, ready after 3.2s"
+    },
+    {
+      "check": "sensor changes survived the restart (every field, version and timestamps identical)",
+      "ok": true,
+      "detail": "sensors 9000001 and 400001"
+    },
+    {
+      "check": "setting changes survived the restart (value, version, updated_by, timestamps identical)",
+      "ok": true,
+      "detail": "alert_threshold, watchlist_size, custom.verify"
+    },
+    {
+      "check": "deletions survived the restart",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "persisted settings still drive behaviour after the restart",
+      "ok": true,
+      "detail": "watch-list 5, alerts 2"
+    },
+    {
+      "check": "during the outage reads and writes answer 503 database_unavailable (+ Retry-After), the process stays up",
+      "ok": true,
+      "detail": "503 after 3.2s (server selection timeout), /health 200, /ready 503"
+    },
+    {
+      "check": "API recovers by itself when MongoDB is back (no API restart)",
+      "ok": true,
+      "detail": "first 200 1.2s after `docker start`"
+    },
+    {
+      "check": "data and failed-write protection after the outage (volume intact, the refused write left no trace)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "loader re-run keeps analyst edits (name, tags, status, version) and refreshes dataset stats",
+      "ok": true,
+      "detail": "stats_synced_at advanced; API-created sensor untouched"
+    },
+    {
+      "check": "API inference equals the probabilities the streaming job stored (same model, same features)",
+      "ok": true,
+      "detail": "5 sensors, max |dp| = 2.3e-07; cold start (Spark + model load) 25s on the first call; warm latency 954-1236 ms"
+    },
+    {
+      "check": "cleanup: created sensors/settings removed, edited sensor restored",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "transcript": [
+    {
+      "step": "1 baseline",
+      "request": "GET /api/v1/status",
+      "status": 200,
+      "ms": 51.0,
+      "note": ""
+    },
+    {
+      "step": "1 baseline",
+      "request": "GET /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 48.2,
+      "note": ""
+    },
+    {
+      "step": "1 baseline",
+      "request": "GET /api/v1/settings",
+      "status": 200,
+      "ms": 47.0,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "POST /api/v1/sensors",
+      "status": 201,
+      "ms": 33.6,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "PATCH /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 22.0,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "PUT /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 23.5,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "PATCH /api/v1/sensors/9000001",
+      "status": 412,
+      "ms": 6.7,
+      "note": "precondition_failed"
+    },
+    {
+      "step": "2 sensors",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 4.8,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "POST /api/v1/sensors",
+      "status": 201,
+      "ms": 10.7,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "DELETE /api/v1/sensors/9000002",
+      "status": 204,
+      "ms": 19.5,
+      "note": ""
+    },
+    {
+      "step": "2 sensors",
+      "request": "GET /api/v1/sensors/9000002",
+      "status": 404,
+      "ms": 2.9,
+      "note": "not_found"
+    },
+    {
+      "step": "2 sensors",
+      "request": "DELETE /api/v1/sensors/9000002",
+      "status": 404,
+      "ms": 6.9,
+      "note": "not_found"
+    },
+    {
+      "step": "2 sensors",
+      "request": "POST /api/v1/sensors",
+      "status": 422,
+      "ms": 5.6,
+      "note": "validation_error"
+    },
+    {
+      "step": "2 sensors",
+      "request": "POST /api/v1/sensors",
+      "status": 409,
+      "ms": 8.7,
+      "note": "conflict"
+    },
+    {
+      "step": "2 sensors",
+      "request": "PATCH /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 7.9,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "PUT /api/v1/settings/alert_threshold",
+      "status": 201,
+      "ms": 28.0,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "PUT /api/v1/settings/alert_threshold",
+      "status": 200,
+      "ms": 5.7,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "PUT /api/v1/settings/alert_threshold",
+      "status": 422,
+      "ms": 7.4,
+      "note": "validation_error"
+    },
+    {
+      "step": "2 settings",
+      "request": "PUT /api/v1/settings/watchlist_size",
+      "status": 201,
+      "ms": 6.2,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "POST /api/v1/settings",
+      "status": 201,
+      "ms": 19.4,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "PATCH /api/v1/settings/custom.verify",
+      "status": 200,
+      "ms": 29.0,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "POST /api/v1/settings",
+      "status": 201,
+      "ms": 5.3,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "DELETE /api/v1/settings/custom.verify_tmp",
+      "status": 204,
+      "ms": 25.7,
+      "note": ""
+    },
+    {
+      "step": "2 settings",
+      "request": "GET /api/v1/settings/custom.verify_tmp",
+      "status": 404,
+      "ms": 29.3,
+      "note": "not_found"
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/hotspots/watchlist",
+      "status": 200,
+      "ms": 47.0,
+      "note": ""
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/predictions/latest",
+      "status": 200,
+      "ms": 42.6,
+      "note": ""
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 7.2,
+      "note": ""
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 4.0,
+      "note": ""
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/settings/alert_threshold",
+      "status": 200,
+      "ms": 2.7,
+      "note": ""
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/settings/watchlist_size",
+      "status": 200,
+      "ms": 4.7,
+      "note": ""
+    },
+    {
+      "step": "2 behaviour",
+      "request": "GET /api/v1/settings/custom.verify",
+      "status": 200,
+      "ms": 4.6,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 44.9,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 7.1,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/settings/alert_threshold",
+      "status": 200,
+      "ms": 59.1,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/settings/watchlist_size",
+      "status": 200,
+      "ms": 13.1,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/settings/custom.verify",
+      "status": 200,
+      "ms": 11.3,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/sensors/9000002",
+      "status": 404,
+      "ms": 7.5,
+      "note": "not_found"
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/settings/custom.verify_tmp",
+      "status": 404,
+      "ms": 4.2,
+      "note": "not_found"
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/hotspots/watchlist",
+      "status": 200,
+      "ms": 32.9,
+      "note": ""
+    },
+    {
+      "step": "4 after restart",
+      "request": "GET /api/v1/predictions/latest",
+      "status": 200,
+      "ms": 34.0,
+      "note": ""
+    },
+    {
+      "step": "5 after outage",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 7.0,
+      "note": ""
+    },
+    {
+      "step": "5 after outage",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 7.3,
+      "note": ""
+    },
+    {
+      "step": "5 after outage",
+      "request": "GET /api/v1/settings/alert_threshold",
+      "status": 200,
+      "ms": 3.9,
+      "note": ""
+    },
+    {
+      "step": "6 loader",
+      "request": "GET /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 5.7,
+      "note": ""
+    },
+    {
+      "step": "6 loader",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 200,
+      "ms": 3.7,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/predictions/latest",
+      "status": 200,
+      "ms": 11.0,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/models/example",
+      "status": 200,
+      "ms": 885.4,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "POST /api/v1/models/predict",
+      "status": 200,
+      "ms": 28776.1,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/models/example",
+      "status": 200,
+      "ms": 1118.2,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "POST /api/v1/models/predict",
+      "status": 200,
+      "ms": 1246.3,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/models/example",
+      "status": 200,
+      "ms": 951.3,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "POST /api/v1/models/predict",
+      "status": 200,
+      "ms": 1140.3,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/models/example",
+      "status": 200,
+      "ms": 1003.2,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "POST /api/v1/models/predict",
+      "status": 200,
+      "ms": 1016.7,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/models/example",
+      "status": 200,
+      "ms": 1003.6,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "POST /api/v1/models/predict",
+      "status": 200,
+      "ms": 962.6,
+      "note": ""
+    },
+    {
+      "step": "7 inference",
+      "request": "GET /api/v1/models/info",
+      "status": 200,
+      "ms": 28.1,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "GET /openapi.json",
+      "status": 200,
+      "ms": 104.8,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "DELETE /api/v1/sensors/9000001",
+      "status": 204,
+      "ms": 23.6,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "PUT /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 22.1,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "DELETE /api/v1/settings/alert_threshold",
+      "status": 204,
+      "ms": 23.1,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "DELETE /api/v1/settings/watchlist_size",
+      "status": 204,
+      "ms": 3.4,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "DELETE /api/v1/settings/custom.verify",
+      "status": 204,
+      "ms": 3.0,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "GET /api/v1/settings",
+      "status": 200,
+      "ms": 15.9,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "GET /api/v1/sensors/400001",
+      "status": 200,
+      "ms": 6.9,
+      "note": ""
+    },
+    {
+      "step": "8 cleanup",
+      "request": "GET /api/v1/sensors/9000001",
+      "status": 404,
+      "ms": 3.5,
+      "note": "not_found"
+    }
+  ],
+  "openapi": {
+    "paths": 34,
+    "operations": 42,
+    "groups": [
+      "analytics",
+      "health",
+      "hotspots",
+      "models",
+      "pipeline",
+      "predictions",
+      "sensors",
+      "settings",
+      "streaming"
+    ]
+  }
+}

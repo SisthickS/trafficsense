@@ -1,0 +1,51 @@
+{
+  "qid": "q18",
+  "title": "Model generalization across time periods and sensors",
+  "question": "Does the selected model perform consistently across weeks, months, times of day, day types and individual sensors, and can it generalize to sensors it was not trained on?",
+  "findings": [
+    "Across 9 weeks (validation + test), weekly F1 ranges 0.923\u20130.937 (std 0.005) with a trend of -0.004 per 10 weeks: no meaningful drift.",
+    "By month: 2017-05 F1 0.933 (gain +0.008), 2017-06 F1 0.932 (gain +0.008).",
+    "By hour (test), the model adds most over persistence at 06:00 (+0.051 F1); F1 is lowest at 05:00 (0.725, 113 positives; hours with \u2265 100 positives). Day types: holiday 0.672, weekend 0.905, working day 0.931.",
+    "Per sensor (264 sensors with \u2265 30 positives): median F1 0.916, IQR 0.852\u20130.949. Spearman \u03c1 = 0.78 with the sensor's congestion rate, so the model is better on frequently congested sensors.",
+    "Sensor hold-out (65 hidden sensors): F1 0.910 when trained on all sensors, 0.909 when the sensors are unseen (-0.001), and 0.908 for a cold-start sensor without history features (persistence 0.905).",
+    "Calibration (test): Brier 0.0102, ECE 0.016. Probabilities are over-confident (above observed rates) as expected from class weighting, so use the tuned threshold rather than raw probabilities."
+  ],
+  "implications": [
+    "Performance is stable over the validation and test weeks, so a monthly retraining schedule with weekly monitoring of F1 against persistence is sufficient.",
+    "New sensors: the model still beats persistence without sensor history (cold start), but accuracy improves once a few weeks of history exist for the sensor-statistics and profile features.",
+    "On the dashboard, show the per-sensor reliability (F1 from this analysis) next to each prediction."
+  ],
+  "limitations": [
+    "Six months of data allow only short-term drift analysis; seasonal drift (summer/holidays) is not covered.",
+    "The hold-out experiment uses compact models on a small sample; its absolute F1 is lower than Q16's, so compare settings with each other.",
+    "Hidden sensors are still neighbours of training sensors, so spatial generalization to a different city is not tested."
+  ],
+  "metrics": {
+    "weekly_f1_min": 0.9232008592910848,
+    "weekly_f1_max": 0.9373322225307785,
+    "weekly_slope_per_10w": -0.004294266519506782,
+    "sensor_median_f1": 0.9162820456465786,
+    "holdout": {
+      "trained on all sensors": 0.9097886260694514,
+      "trained without hidden sensors": 0.9086961060653513,
+      "cold start (no sensor history features)": 0.9084025351935909,
+      "persistence baseline": 0.904899744342792
+    },
+    "brier": 0.01019185973706929,
+    "ece": 0.0163530125125624
+  },
+  "tables": {
+    "weeks": "tables/q18_weeks.csv",
+    "months": "tables/q18_months.csv",
+    "hours": "tables/q18_hours.csv",
+    "day_types": "tables/q18_day_types.csv",
+    "sensor_holdout": "tables/q18_sensor_holdout.csv",
+    "calibration": "tables/q18_calibration.csv",
+    "sensors": "tables/q18_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q18_time.png",
+    "../figures/analytics/q18_sensors_calibration.png"
+  ],
+  "seconds": 131.1
+}

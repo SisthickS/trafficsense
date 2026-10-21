@@ -1,0 +1,134 @@
+== Physical Plan ==
+AdaptiveSparkPlan (23)
++- == Final Plan ==
+   TakeOrderedAndProject (13)
+   +- * HashAggregate (12)
+      +- * HashAggregate (11)
+         +- * Project (10)
+            +- * Filter (9)
+               +- Window (8)
+                  +- * Sort (7)
+                     +- AQEShuffleRead (6)
+                        +- ShuffleQueryStage (5), Statistics(sizeInBytes=516.9 MiB, rowCount=1.69E+7)
+                           +- Exchange (4)
+                              +- * Project (3)
+                                 +- * ColumnarToRow (2)
+                                    +- Scan parquet  (1)
++- == Initial Plan ==
+   TakeOrderedAndProject (22)
+   +- HashAggregate (21)
+      +- HashAggregate (20)
+         +- Project (19)
+            +- Filter (18)
+               +- Window (17)
+                  +- Sort (16)
+                     +- Exchange (15)
+                        +- Project (14)
+                           +- Scan parquet  (1)
+
+
+(1) Scan parquet 
+Output [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+Batched: true
+Location: InMemoryFileIndex [file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean]
+ReadSchema: struct<sensor_id:int,ts_utc:timestamp,speed_mph:float>
+
+(2) ColumnarToRow [codegen id : 1]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+
+(3) Project [codegen id : 1]
+Output [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+
+(4) Exchange
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: hashpartitioning(sensor_id#0, 48), ENSURE_REQUIREMENTS, [plan_id=4040]
+
+(5) ShuffleQueryStage
+Output [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: 0
+
+(6) AQEShuffleRead
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: coalesced
+
+(7) Sort [codegen id : 2]
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: [sensor_id#0 ASC NULLS FIRST, ts_utc#1 ASC NULLS FIRST], false, 0
+
+(8) Window
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: [lag(speed_mph#4, -1, null) windowspecdefinition(sensor_id#0, ts_utc#1 ASC NULLS FIRST, specifiedwindowframe(RowFrame, -1, -1)) AS prev_speed#897], [sensor_id#0], [ts_utc#1 ASC NULLS FIRST]
+
+(9) Filter [codegen id : 3]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, prev_speed#897]
+Condition : ((isnotnull(speed_mph#4) AND isnotnull(prev_speed#897)) AND ((speed_mph#4 < 35.0) AND (prev_speed#897 >= 35.0)))
+
+(10) Project [codegen id : 3]
+Output [1]: [sensor_id#0]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, prev_speed#897]
+
+(11) HashAggregate [codegen id : 3]
+Input [1]: [sensor_id#0]
+Keys [1]: [sensor_id#0]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#1002L]
+Results [2]: [sensor_id#0, count#1003L]
+
+(12) HashAggregate [codegen id : 3]
+Input [2]: [sensor_id#0, count#1003L]
+Keys [1]: [sensor_id#0]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#906L]
+Results [2]: [sensor_id#0, count(1)#906L AS onsets#907L]
+
+(13) TakeOrderedAndProject
+Input [2]: [sensor_id#0, onsets#907L]
+Arguments: 10, [onsets#907L DESC NULLS LAST, sensor_id#0 ASC NULLS FIRST], [sensor_id#0, onsets#907L]
+
+(14) Project
+Output [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+
+(15) Exchange
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: hashpartitioning(sensor_id#0, 48), ENSURE_REQUIREMENTS, [plan_id=3984]
+
+(16) Sort
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: [sensor_id#0 ASC NULLS FIRST, ts_utc#1 ASC NULLS FIRST], false, 0
+
+(17) Window
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: [lag(speed_mph#4, -1, null) windowspecdefinition(sensor_id#0, ts_utc#1 ASC NULLS FIRST, specifiedwindowframe(RowFrame, -1, -1)) AS prev_speed#897], [sensor_id#0], [ts_utc#1 ASC NULLS FIRST]
+
+(18) Filter
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, prev_speed#897]
+Condition : ((isnotnull(speed_mph#4) AND isnotnull(prev_speed#897)) AND ((speed_mph#4 < 35.0) AND (prev_speed#897 >= 35.0)))
+
+(19) Project
+Output [1]: [sensor_id#0]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, prev_speed#897]
+
+(20) HashAggregate
+Input [1]: [sensor_id#0]
+Keys [1]: [sensor_id#0]
+Functions [1]: [partial_count(1)]
+Aggregate Attributes [1]: [count#1002L]
+Results [2]: [sensor_id#0, count#1003L]
+
+(21) HashAggregate
+Input [2]: [sensor_id#0, count#1003L]
+Keys [1]: [sensor_id#0]
+Functions [1]: [count(1)]
+Aggregate Attributes [1]: [count(1)#906L]
+Results [2]: [sensor_id#0, count(1)#906L AS onsets#907L]
+
+(22) TakeOrderedAndProject
+Input [2]: [sensor_id#0, onsets#907L]
+Arguments: 10, [onsets#907L DESC NULLS LAST, sensor_id#0 ASC NULLS FIRST], [sensor_id#0, onsets#907L]
+
+(23) AdaptiveSparkPlan
+Output [2]: [sensor_id#0, onsets#907L]
+Arguments: isFinalPlan=true
+

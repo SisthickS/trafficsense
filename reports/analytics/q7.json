@@ -1,0 +1,47 @@
+{
+  "qid": "q7",
+  "title": "Congestion propagation (lagged associations)",
+  "question": "Does congestion travel along the road network, in which direction (with or against the traffic flow), and with what time lag?",
+  "findings": [
+    "Neighbouring sensors move together: median correlation of same-time speed anomalies 0.27 over 2,369 directed edges; 1,147 edges (48.4%) have a peak correlation \u2265 0.3.",
+    "Direction at 5-minute resolution: **no dominant direction**. On 42.2% of the informative edges the downstream sensor leads (asymmetry > 0); 53.6% peak at lag 0 (median peak lag +0 min, IQR +0 to +5). Linked sensors are a median 2.2 km apart (straight line). Vehicles cover that in about 1 min at 60 mph, and a backward-moving queue front (typically ~15\u201320 km/h) in about 7\u20139 min, at or below the 5-minute resolution, so the direction is hard to resolve.",
+    "Event view: 15 min after a downstream onset, the upstream neighbour is congested with probability 32.7% (3.7\u00d7 its baseline 8.85%); after an upstream onset, the downstream neighbour is congested with probability 32.1% (3.9\u00d7 baseline). The two directions are practically symmetric.",
+    "Each sensor's own anomaly persists: median autocorrelation 0.95 at 5 min, 0.81 at 15 min, 0.63 at 30 min and 0.43 at 60 min. This memory is why the persistence baseline is strong at 5 minutes."
+  ],
+  "implications": [
+    "An onset at a neighbour raises a sensor's congestion probability 3.7\u20133.9\u00d7 within 15 minutes, so the `nbr_*` features carry real predictive signal in both directions.",
+    "Because most co-movement happens within the same 5-minute interval, same-time neighbour features matter more than lagged neighbour features at this horizon. Longer horizons (15\u201330 min) are where lagged spatial features should add the most.",
+    "In the dashboard, a fresh onset can trigger an early warning for the adjacent sensors in both directions."
+  ],
+  "limitations": [
+    "Correlation is not causation: shared demand surges can make neighbours co-move without propagation.",
+    "With a 5-minute resolution and linked sensors a median 2.2 km apart, propagation faster than one interval looks simultaneous; finer data (30 s PeMS) would be needed to resolve the direction.",
+    "Graph edges come from the DCRNN road-distance kernel; distances above are straight-line, not along the road, so propagation speeds are not derived.",
+    "Autocorrelation is computed on every 5th sensor, for speed."
+  ],
+  "metrics": {
+    "median_corr0": 0.26785409450531006,
+    "informative_edges": 1147,
+    "share_downstream_leads": 0.4219703574542284,
+    "p_up_after_down_onset_15m": 0.32654790594496275,
+    "p_down_after_up_onset_15m": 0.3212336495014549,
+    "baseline_up": 0.08851750940084457,
+    "baseline_down": 0.08334892988204956,
+    "autocorr": {
+      "5m": 0.949,
+      "15m": 0.811,
+      "30m": 0.635,
+      "60m": 0.43
+    }
+  },
+  "tables": {
+    "lag_curves": "tables/q7_lag_curves.csv",
+    "edges_top": "tables/q7_edges_top.csv",
+    "edges": "tables/q7_edges.csv"
+  },
+  "figures": [
+    "../figures/analytics/q7_lagged_correlation.png",
+    "../figures/analytics/q7_event_conditional.png"
+  ],
+  "seconds": 92.5
+}

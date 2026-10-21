@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /mnt/c/Users/ssis/Desktop/bdaa/frontend
+
+ ✓ tests/lib.test.ts (6 tests) 2750ms
+   ✓ API client against the live backend > reads the readiness probe and the status overview  2002ms
+ ✓ tests/charts.test.ts (20 tests) 3523ms
+   ✓ chart specifications vs. the real MongoDB analysis tables > q1: every chart draws non-empty traces from served data  2062ms
+ ✓ tests/data-status.test.tsx (3 tests) 4007ms
+   ✓ Data Management: sensor CRUD through the UI writes to MongoDB > creates, edits, changes status and deletes a sensor  3160ms
+   ✓ Analysis History & System Status > shows live service health, every MongoDB collection and the run history  794ms
+
+ Test Files  3 passed (3)
+      Tests  29 passed (29)
+   Start at  05:52:25
+   Duration  10.73s (transform 3.25s, setup 3.19s, collect 4.15s, tests 10.28s, environment 4.86s, prepare 765ms)
+

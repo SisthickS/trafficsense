@@ -1,0 +1,37 @@
+{
+  "qid": "q15",
+  "title": "Simulated-stream throughput and latency benchmarks",
+  "question": "Can Spark Structured Streaming process the PEMS-BAY sensor stream fast enough for real-time 5-minute predictions on this machine, and which settings matter?",
+  "findings": [
+    "Peak throughput **13,096 readings/s** (40.5 five-minute slots per second) with 48 slots per micro-batch and 12 shuffle partitions: about **12,146\u00d7 faster than real time** for the 325-sensor network (one slot arrives every 300 s).",
+    "Micro-batch size matters: one slot per batch reaches only 469 readings/s (median batch 652 ms, dominated by fixed per-batch overhead: planning 24 ms, commit 125 ms).",
+    "State-store partitions: 4 \u2192 8,187 readings/s (batch p50 448 ms), 12 \u2192 4,725 readings/s (batch p50 684 ms), 48 \u2192 2,067 readings/s (batch p50 1828 ms). Each partition is a separate state store, so too many small partitions add overhead.",
+    "End-to-end latency (file landed \u2192 window result in the sink) at 600\u00d7 real-time arrival: median **0.83 s**, p95 1.42 s with the default trigger; 1.04 s / 2.32 s with a 2 s processing-time trigger. Both are far below the 5-minute prediction horizon.",
+    "Model scoring (Logistic regression): 322 rows (one slot) in a median 138 ms; 82,628 rows/s for a 4-hour batch. Scoring adds well under a second per slot."
+  ],
+  "implications": [
+    "A single laptop processes the 325-sensor stream several orders of magnitude faster than real time, so Phase 7 can afford the full feature set plus model scoring in each 5-minute micro-batch.",
+    "Use small, regular micro-batches (default or a few-second processing-time trigger) for latency, and around 12 shuffle partitions (\u2248 cores) for the state store. Larger batches only help when catching up a backlog.",
+    "Per-batch fixed overhead (planning, offset/commit logs) dominates small batches; Kafka will change the source overhead but not the stateful aggregation or the commit costs."
+  ],
+  "limitations": [
+    "File source and accelerated replay stand in for Kafka; network, broker and serialization costs are not included yet.",
+    "Single machine in local mode (shared CPU with the driver); results are for this laptop, not a cluster.",
+    "Latency is measured from file landing to the sink; production latency also includes sensor \u2192 Kafka transport."
+  ],
+  "metrics": {
+    "peak_rows_per_s": 13096.078007093154,
+    "realtime_factor": 12145.78295204861,
+    "latency_p50_s": 0.829644287109375,
+    "latency_p95_s": 1.416673828125
+  },
+  "tables": {
+    "throughput": "tables/q15_throughput.csv",
+    "latency": "tables/q15_latency.csv",
+    "scoring": "tables/q15_scoring.csv"
+  },
+  "figures": [
+    "../figures/analytics/q15_streaming.png"
+  ],
+  "seconds": 503.5
+}

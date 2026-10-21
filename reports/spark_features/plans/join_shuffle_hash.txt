@@ -1,0 +1,61 @@
+== Physical Plan ==
+AdaptiveSparkPlan (10)
++- Project (9)
+   +- ShuffledHashJoin Inner BuildLeft (8)
+      :- Exchange (4)
+      :  +- Project (3)
+      :     +- Filter (2)
+      :        +- Scan parquet  (1)
+      +- Exchange (7)
+         +- Filter (6)
+            +- Scan parquet  (5)
+
+
+(1) Scan parquet 
+Output [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+Batched: true
+Location: InMemoryFileIndex [file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean]
+PushedFilters: [IsNotNull(sensor_id)]
+ReadSchema: struct<sensor_id:int,ts_utc:timestamp,speed_mph:float>
+
+(2) Filter
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+Condition : isnotnull(sensor_id#0)
+
+(3) Project
+Output [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Input [4]: [sensor_id#0, ts_utc#1, speed_mph#4, month#8]
+
+(4) Exchange
+Input [3]: [sensor_id#0, ts_utc#1, speed_mph#4]
+Arguments: hashpartitioning(sensor_id#0, 48), ENSURE_REQUIREMENTS, [plan_id=2286]
+
+(5) Scan parquet 
+Output [4]: [sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+Batched: true
+Location: InMemoryFileIndex [file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/sensor_stats]
+PushedFilters: [IsNotNull(sensor_id)]
+ReadSchema: struct<sensor_id:int,latitude:double,longitude:double,ff_speed:float>
+
+(6) Filter
+Input [4]: [sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+Condition : isnotnull(sensor_id#3371)
+
+(7) Exchange
+Input [4]: [sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+Arguments: hashpartitioning(sensor_id#3371, 48), ENSURE_REQUIREMENTS, [plan_id=2287]
+
+(8) ShuffledHashJoin
+Left keys [1]: [sensor_id#0]
+Right keys [1]: [sensor_id#3371]
+Join type: Inner
+Join condition: None
+
+(9) Project
+Output [7]: [sensor_id#0, ts_utc#1, speed_mph#4, ff_speed#3376, latitude#3372, longitude#3373, (cast(speed_mph#4 as double) / cast(ff_speed#3376 as double)) AS ratio#3485]
+Input [7]: [sensor_id#0, ts_utc#1, speed_mph#4, sensor_id#3371, latitude#3372, longitude#3373, ff_speed#3376]
+
+(10) AdaptiveSparkPlan
+Output [7]: [sensor_id#0, ts_utc#1, speed_mph#4, ff_speed#3376, latitude#3372, longitude#3373, ratio#3485]
+Arguments: isFinalPlan=false
+

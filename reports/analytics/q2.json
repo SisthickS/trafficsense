@@ -1,0 +1,40 @@
+{
+  "qid": "q2",
+  "title": "Consistency of recurring traffic profiles",
+  "question": "Is congestion recurrent (same place, same time, most working days) or sporadic, and how consistent are each sensor's daily speed profiles from day to day?",
+  "findings": [
+    "**69.3%** of all congested sensor-slot-days on working days are **recurrent** (the slot is congested on \u2265 50% of working days); the remaining 30.7% are non-recurrent (incidents, special events, demand spikes). Total: 246,448 congested sensor-slot-days.",
+    "Of 210 congestion-prone sensors (\u2265 2% of working-day readings congested), 109 are highly recurrent (\u2265 70% of their congestion is recurrent) and 42 are mostly sporadic (< 30%).",
+    "Daily speed profiles of congestion-prone sensors closely follow their average profile: median day-vs-average correlation 0.96, median RMSE 4.1 mph.",
+    "PM congestion starts at a consistent time: median day-to-day standard deviation of the onset is 38 minutes (sensor 407342 is the most consistent profile, r = 0.99).",
+    "115 sensors rarely congest (< 2%); their profiles are flat, so correlation is not meaningful for them."
+  ],
+  "implications": [
+    "Most congestion is recurrent, which is why the historical slot profile features (`hist_speed_next`, `hist_congested_rate_next`) and calendar features carry strong signal.",
+    "The non-recurrent share is what a calendar-only model cannot anticipate; real-time features (lags, neighbours, rolling statistics) must capture it. Evaluate the model on these unusual events separately.",
+    "Highly recurrent sensors are candidates for schedule-based alerts on the dashboard. Sporadic sensors need live detection."
+  ],
+  "limitations": [
+    "A 15-min slot counts as congested if any of its three readings is below 35 mph.",
+    "The 50% recurrence cut-off is a convention; the per-sensor shares in the CSV allow other cut-offs.",
+    "Incidents are not labelled in PEMS-BAY, so non-recurrent congestion is identified only statistically."
+  ],
+  "metrics": {
+    "recurrent_share": 0.6933633058495098,
+    "congested_slot_days": 246448,
+    "prone_sensors": 210,
+    "highly_recurrent_sensors": 109,
+    "median_profile_corr_prone": 0.9574054607693399,
+    "median_pm_onset_std_min": 38.31072449960007
+  },
+  "tables": {
+    "prone_sensors": "tables/q2_prone_sensors.csv",
+    "all_sensors": "tables/q2_all_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q2_recurrent_share_hist.png",
+    "../figures/analytics/q2_recurrence_heatmap.png",
+    "../figures/analytics/q2_example_profiles.png"
+  ],
+  "seconds": 20.3
+}

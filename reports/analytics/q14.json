@@ -1,0 +1,38 @@
+{
+  "qid": "q14",
+  "title": "Traffic anomalies versus sensor anomalies",
+  "question": "When a sensor reports an unusual speed, is it a real traffic event (seen by neighbouring sensors too) or a sensor problem (an isolated glitch)?",
+  "findings": [
+    "748,806 anomalous readings (4.44% of 16,881,199 observed): **78.9% are traffic anomalies** corroborated by a neighbour, 19.1% isolated persistent, 0.9% isolated spikes and 1.2% unverifiable.",
+    "Traffic anomalies are mostly slowdowns (81.9%) and cluster in peak hours (39.8% at 06\u201310/15\u201319h), while isolated anomalies are spread through the day (28.2% in the same hours).",
+    "Isolated spikes are concentrated on few sensors: the 15 most spike-prone sensors carry 49.5% of all spikes.",
+    "Spike rate and the invalid-reading share from cleaning are essentially unrelated across sensors (Spearman \u03c1 = -0.02). Spikes therefore reveal a *different* kind of sensor problem than the stuck/zero readings found in cleaning."
+  ],
+  "implications": [
+    "**Recommendation:** suppress dashboard alerts for uncorroborated isolated spikes (or flag them 'unconfirmed'), and only escalate anomalies that a neighbour confirms.",
+    "Sensors in the suspect table should be checked by maintenance; their isolated anomalies would otherwise trigger false congestion alerts.",
+    "Neighbour corroboration can run in the streaming job with the same graph join (Phase 7)."
+  ],
+  "limitations": [
+    "Corroboration needs a neighbour within the DCRNN graph; isolated sensors cannot be verified.",
+    "A real but very local event (e.g. a lane closure right at one detector) can look like a sensor anomaly.",
+    "The thresholds (|z| \u2265 3.5, neighbour |z| \u2265 2.0) are conventional; results scale with them."
+  ],
+  "metrics": {
+    "anomalies": 748806,
+    "share_traffic": 0.7887116289132299,
+    "share_isolated_spike": 0.008541598224373202,
+    "spearman_spikes_invalid": -0.02452284894569434
+  },
+  "tables": {
+    "kinds": "tables/q14_kinds.csv",
+    "suspect_sensors": "tables/q14_suspect_sensors.csv",
+    "by_hour": "tables/q14_by_hour.csv",
+    "per_sensor": "tables/q14_per_sensor.csv"
+  },
+  "figures": [
+    "../figures/analytics/q14_kinds.png",
+    "../figures/analytics/q14_examples.png"
+  ],
+  "seconds": 65.6
+}

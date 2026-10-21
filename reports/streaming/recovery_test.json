@@ -1,0 +1,294 @@
+{
+  "passed": true,
+  "seconds": 384.2,
+  "replay": {
+    "topic": "traffic.speed.events",
+    "start": "2017-06-05T12:00:00Z",
+    "hours": 6.0,
+    "unique_events": 23321,
+    "messages_sent": 23802,
+    "delivered": 23802,
+    "delivery_errors": 0,
+    "normal": 23089,
+    "duplicates": 246,
+    "late": 232,
+    "malformed": 235,
+    "speedup": 0.0,
+    "events_per_sec_target": 0.0,
+    "wall_seconds": 0.69,
+    "achieved_msgs_per_sec": 34247.7,
+    "achieved_speedup": 31079.3,
+    "first_event_ts": "2017-06-05 12:00:00",
+    "last_event_ts": "2017-06-05 17:55:00",
+    "seed": 42
+  },
+  "scenarios": {
+    "reference": {
+      "exit_code": 0,
+      "seconds": 96.7,
+      "predictions": 23004,
+      "batches": 12,
+      "checkpoint": {
+        "offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "commits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      }
+    },
+    "kill -9": {
+      "killed_after_committed_batch": 3,
+      "predictions_at_kill": 7475,
+      "checkpoint_at_kill": {
+        "offsets": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "commits": [
+          0,
+          1,
+          2
+        ]
+      },
+      "restart_seconds": 72.2,
+      "checkpoint_final": {
+        "offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "commits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "restart_log": [
+        "16:47:15 INFO    trafficsense.stream RECOVERED state from MongoDB in 3.2s: last finalized slot 4988902 (2017-06-05 13:50:00), 7759 persisted readings, 2 pending slots, last committed batch 3"
+      ],
+      "checks": {
+        "same number of predictions": {
+          "ok": true,
+          "detail": "23,004 vs reference 23,004"
+        },
+        "same prediction ids (nothing lost, nothing extra)": {
+          "ok": true,
+          "detail": "missing 0, extra 0"
+        },
+        "probabilities identical": {
+          "ok": true,
+          "detail": "max |dp| = 0.0e+00"
+        },
+        "alerts identical": {
+          "ok": true,
+          "detail": "2,974 alerts"
+        },
+        "no duplicate predictions": {
+          "ok": true,
+          "detail": "_id = sensor|slot; upserts are idempotent"
+        },
+        "same readings": {
+          "ok": true,
+          "detail": "23,093 vs reference 23,093"
+        },
+        "same late": {
+          "ok": true,
+          "detail": "228 vs reference 228"
+        },
+        "same dead": {
+          "ok": true,
+          "detail": "235 vs reference 235"
+        },
+        "same sensor_windows": {
+          "ok": true,
+          "detail": "22,356 vs reference 22,356"
+        },
+        "same network_windows": {
+          "ok": true,
+          "detail": "69 vs reference 69"
+        },
+        "same final state": {
+          "ok": true,
+          "detail": "last finalized slot 4988950 vs 4988950"
+        },
+        "killed mid-stream (partial output before the kill)": {
+          "ok": true,
+          "detail": "7,475 of 23,004 predictions"
+        },
+        "restart recovered driver state from MongoDB": {
+          "ok": true,
+          "detail": "RECOVERED state from MongoDB in 3.2s: last finalized slot 4988902 (2017-06-05 13:50:00), 7759 persisted readings, 2 pending slots, last committed batch 3"
+        },
+        "restart finished cleanly": {
+          "ok": true,
+          "detail": "exit code 0"
+        }
+      }
+    },
+    "injected crash": {
+      "crash_batch": 4,
+      "exit_code_first_run": 137,
+      "documents_written_before_crash": 2275,
+      "checkpoint_at_crash": {
+        "offsets": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "commits": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "restart_seconds": 63.8,
+      "checkpoint_final": {
+        "offsets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "commits": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
+      },
+      "restart_log": [
+        "16:49:42 INFO    trafficsense.stream RECOVERED state from MongoDB in 1.0s: last finalized slot 4988902 (2017-06-05 13:50:00), 9704 persisted readings, 8 pending slots, last committed batch 3"
+      ],
+      "checks": {
+        "same number of predictions": {
+          "ok": true,
+          "detail": "23,004 vs reference 23,004"
+        },
+        "same prediction ids (nothing lost, nothing extra)": {
+          "ok": true,
+          "detail": "missing 0, extra 0"
+        },
+        "probabilities identical": {
+          "ok": true,
+          "detail": "max |dp| = 0.0e+00"
+        },
+        "alerts identical": {
+          "ok": true,
+          "detail": "2,974 alerts"
+        },
+        "no duplicate predictions": {
+          "ok": true,
+          "detail": "_id = sensor|slot; upserts are idempotent"
+        },
+        "same readings": {
+          "ok": true,
+          "detail": "23,093 vs reference 23,093"
+        },
+        "same late": {
+          "ok": true,
+          "detail": "228 vs reference 228"
+        },
+        "same dead": {
+          "ok": true,
+          "detail": "235 vs reference 235"
+        },
+        "same sensor_windows": {
+          "ok": true,
+          "detail": "22,356 vs reference 22,356"
+        },
+        "same network_windows": {
+          "ok": true,
+          "detail": "69 vs reference 69"
+        },
+        "same final state": {
+          "ok": true,
+          "detail": "last finalized slot 4988950 vs 4988950"
+        },
+        "crash happened after output write, before commit": {
+          "ok": true,
+          "detail": "exit 137, 2,275 documents of batch 4 already written, last committed batch 3"
+        },
+        "interrupted batch recomputed idempotently": {
+          "ok": true,
+          "detail": "2,275/2,275 documents rewritten by the restart with identical probabilities"
+        },
+        "restart recovered driver state from MongoDB": {
+          "ok": true,
+          "detail": "RECOVERED state from MongoDB in 1.0s: last finalized slot 4988902 (2017-06-05 13:50:00), 9704 persisted readings, 8 pending slots, last committed batch 3"
+        },
+        "restart finished cleanly": {
+          "ok": true,
+          "detail": "exit code 0"
+        }
+      }
+    }
+  }
+}

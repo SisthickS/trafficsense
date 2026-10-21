@@ -1,0 +1,44 @@
+{
+  "qid": "q1",
+  "title": "Daily and weekly congestion patterns",
+  "question": "When during the day and the week does congestion occur, how strong are the peaks, and how do weekends and holidays differ from working days?",
+  "findings": [
+    "Working-day **PM peak at 17:00** (25.3% of readings congested) is 1.4\u00d7 the **AM peak at 08:00** (17.6%); midday 0.5%, night 0.04%.",
+    "Working days average 5.51% congested readings vs 0.30% on weekends (18.6\u00d7). The 4 federal holidays average 1.03%, much closer to weekends than to working days (3.5\u00d7 the weekend level).",
+    "Most congested weekday: **Thu** (6.14%, 477 congested sensor-hours/day); lightest: Fri (4.28%).",
+    "A typical working day accumulates 428 congested sensor-hours (worst day 2017-01-18, Wed: 650).",
+    "Week-to-week variation of the working-day rate is moderate (coefficient of variation 0.17 over 26 weeks), so the weekly cycle is stable."
+  ],
+  "implications": [
+    "Hour of day and working-day status explain most of the variation in congestion; they are already model features (`hour`, `slot_of_day`, `is_weekend`, `is_holiday`, cyclical encodings).",
+    "The PM peak is the critical operating window: dashboard alerts and model evaluation should report PM-peak performance separately.",
+    "Holidays sit far closer to weekends than to working days, which confirms the separate `is_holiday` flag."
+  ],
+  "limitations": [
+    "Rates are shares of 5-minute sensor readings, not vehicle-weighted: PEMS-BAY has speeds only, no flows.",
+    "Six months (Jan\u2013Jun 2017) cover no summer or holiday-season peaks."
+  ],
+  "metrics": {
+    "am_peak_hour": 8,
+    "am_peak_rate": 0.1762510584898538,
+    "pm_peak_hour": 17,
+    "pm_peak_rate": 0.2525517244198954,
+    "workday_rate": 0.055086545324188996,
+    "weekend_rate": 0.002956422916293681,
+    "holiday_rate": 0.01032513888324424,
+    "weekly_cv": 0.1730332717809657
+  },
+  "tables": {
+    "hourly_profile": "tables/q1_hourly_profile.csv",
+    "day_of_week": "tables/q1_day_of_week.csv",
+    "worst_days": "tables/q1_worst_days.csv",
+    "daily": "tables/q1_daily.csv",
+    "dow_hour": "tables/q1_dow_hour.csv"
+  },
+  "figures": [
+    "../figures/analytics/q1_heatmap_dow_hour.png",
+    "../figures/analytics/q1_hourly_profile.png",
+    "../figures/analytics/q1_daily_series.png"
+  ],
+  "seconds": 30.3
+}

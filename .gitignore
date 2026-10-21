@@ -1,0 +1,48 @@
+# Data: raw files are large and reproducible via download_dataset.py (MANIFEST.json is kept as provenance)
+data/raw/**
+!data/raw/
+!data/raw/.gitkeep
+!data/raw/*/
+!data/raw/*/MANIFEST.json
+data/processed/**
+!data/processed/.gitkeep
+data/models/**
+
+# Local configuration and secrets (the API reads .env; never commit it)
+.env
+.env.*
+!.env.example
+
+# Spark / Python / Jupyter
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+spark-warehouse/
+metastore_db/
+derby.log
+checkpoints/
+*.part
+*.rejected
+
+# Scala / sbt
+scala-rdd/target/
+scala-rdd/project/target/
+scala-rdd/project/project/
+scala-rdd/.bsp/
+.metals/
+.bloop/
+*.crc
+
+# Frontend (Next.js)
+frontend/node_modules
+frontend/.next
+frontend/next-env.d.ts
+*.tsbuildinfo
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

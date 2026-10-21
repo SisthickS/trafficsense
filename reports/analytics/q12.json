@@ -1,0 +1,38 @@
+{
+  "qid": "q12",
+  "title": "Concentration of congestion burden (Pareto analysis)",
+  "question": "How concentrated is the congestion burden across sensors, days and times, does the 80/20 rule hold, and how well would targeting the worst locations work on future data?",
+  "findings": [
+    "Across sensors the 80/20 rule is softened: the top 20% of sensors carry **52.1%** of congested minutes (Gini 0.52); half of all congestion sits on 19.1% of sensors, and 80% on 40.6%.",
+    "Delay is less concentrated: top 20% of sensors carry 41.3% (Gini 0.35 vs 0.52), because moderate slowdowns at many sensors add delay without crossing the 35 mph threshold.",
+    "In space-time the burden is far more concentrated: the top 10% of sensor \u00d7 weekday \u00d7 hour cells carry **95.9%** of congested minutes (Gini 0.94); 80% of the burden sits in 5.0% of cells.",
+    "Across days the burden is evenly spread (Gini 0.37; top 10% of days = 18.9%), so congestion is a daily routine rather than a few extreme days.",
+    "Targeting works out of sample: the top-20% sensors chosen on Jan\u2013Mar data capture **51.9%** of Apr\u2013Jun congested minutes, 98.9% of the hindsight-optimal 52.4% (overlap 90.8%)."
+  ],
+  "implications": [
+    "**Recommendation:** a targeted programme (signal/ramp-metering review, incident patrols) on the top 20% of sensors would address about 52% of future congestion, and the choice can be made from past data.",
+    "Because burden concentrates in specific sensor \u00d7 weekday \u00d7 hour cells, interventions can be time-limited (e.g. weekday PM peaks only) rather than all-day.",
+    "The dashboard's watch-list should be driven by the cell ranking (sensor \u00d7 weekday \u00d7 hour), not just by sensor."
+  ],
+  "limitations": [
+    "Burden is per sensor-reading; without traffic volumes it is not vehicle-weighted.",
+    "Sensors are points of unequal spacing; a long uncovered segment can hide burden (see Q13 on coverage)."
+  ],
+  "metrics": {
+    "gini_sensors": 0.5247862646637047,
+    "top20_sensors_share": 0.5211007850511118,
+    "top10_cells_share": 0.9594623234085918,
+    "targeting_capture": 0.5187172536267252,
+    "targeting_efficiency": 0.9890401282669388
+  },
+  "tables": {
+    "concentration": "tables/q12_concentration.csv",
+    "targeting": "tables/q12_targeting.csv",
+    "top_cells": "tables/q12_top_cells.csv",
+    "sensors": "tables/q12_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q12_lorenz_pareto.png"
+  ],
+  "seconds": 5.9
+}

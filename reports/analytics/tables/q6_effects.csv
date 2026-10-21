@@ -1,0 +1,5 @@
+characteristic,groups,eta_squared_pm_peak,eta_squared_overall,highest_group,lowest_group
+Free-flow speed band,4,0.021276623439412855,0.009212250331824013,Q2,Q1 lowest ff
+Graph position,3,0.017959587220016657,0.013010450617413627,diverge-like (out > in),merge-like (in > out)
+Network density,3,0.016177177770940784,0.005011536871227892,sparse,medium
+Corridor (KMeans),3,0.01551265511253073,0.021399086847355774,C3 NW (9 km),C2 S (7 km)

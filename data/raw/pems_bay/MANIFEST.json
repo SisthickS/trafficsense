@@ -1,0 +1,40 @@
+{
+  "dataset": "pems-bay",
+  "source": "zenodo",
+  "description": "PEMS-BAY speed readings (DCRNN benchmark) exported to CSV, 325 Bay Area sensors, 5-min.",
+  "license": "CC-BY-4.0 (Zenodo record); original data Caltrans PeMS",
+  "landing_page": "https://doi.org/10.5281/zenodo.5724362",
+  "citation": "Li, Y., Yu, R., Shahabi, C., Liu, Y. (2018). Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting. ICLR 2018. Data: Caltrans PeMS (PEMS-BAY), LA Metro loop detectors (METR-LA).",
+  "retrieved_at_utc": "2026-10-20T07:47:26+00:00",
+  "tool": "src/preprocessing/download_dataset.py",
+  "readings_csv": "PEMS-BAY.csv",
+  "locations_csv": "graph_sensor_locations_bay.csv",
+  "adjacency_pkl": "adj_mx_PEMS-BAY.pkl",
+  "files": {
+    "PEMS-BAY.csv": {
+      "role": "readings",
+      "url": "https://zenodo.org/api/records/5724362/files/PEMS-BAY.csv/content",
+      "derived_from": null,
+      "md5": "c8dea58987a5882e946217c22fdb8256",
+      "sha256": "c39dc8f5f3a7f1e9e9deeab1f3fdfa7b87d2b4e45b4075d4c3bd3c62c3051ef2",
+      "size": 85718439
+    },
+    "adj_mx_PEMS-BAY.pkl": {
+      "role": "adjacency",
+      "url": "https://zenodo.org/api/records/5724362/files/adj_mx_PEMS-BAY.pkl/content",
+      "derived_from": null,
+      "md5": "55d25daceac847312b7748c59ded6f77",
+      "sha256": "116275f5704d0d492018e14c047f7ae5004385b450aa907f88424055a4a97370",
+      "size": 1681480
+    },
+    "graph_sensor_locations_bay.csv": {
+      "role": "sensor_locations",
+      "url": "https://raw.githubusercontent.com/liyaguang/DCRNN/602afd9d767d3aa1c9b3eac51710d6aeee12c227/data/sensor_graph/graph_sensor_locations_bay.csv",
+      "derived_from": null,
+      "md5": "b4132fda15443d68dd05b376bb6735c5",
+      "sha256": "276ee01059610774d4e59572507f7e32eaac21f1f5882fcd9e3d7d426a4b7a6c",
+      "size": 9750
+    }
+  },
+  "notes": []
+}

@@ -1,0 +1,4 @@
+issue,quality,count
+stuck_sensor,imputed,1010
+non_positive,imputed,521
+stuck_sensor,missing,54970

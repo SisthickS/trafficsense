@@ -1,0 +1,22 @@
+{
+  "every malformed payload landed in dead_letters": {
+    "ok": true,
+    "detail": "235 dead letters vs 235 injected"
+  },
+  "dead letters carry a reason": {
+    "ok": true,
+    "detail": "{\"unsupported_schema_version\": 28, \"missing_sensor_id\": 36, \"event_ts_out_of_range\": 30, \"speed_out_of_range\": 18, \"missing_speed\": 5, \"malformed_json\": 94, \"bad_event_ts\": 24}"
+  },
+  "duplicates did not create extra readings": {
+    "ok": true,
+    "detail": "23,093 accepted + 228 late <= 23,321 unique events"
+  },
+  "accepted + late == unique events (nothing lost, nothing double counted)": {
+    "ok": true,
+    "detail": "23,093 + 228 = 23,321 vs 23,321 (246 duplicates removed by dropDuplicates)"
+  },
+  "late events were rejected, not predicted": {
+    "ok": true,
+    "detail": "228 rejected of 232 injected as late (the rest were out of order but within the tolerance)"
+  }
+}

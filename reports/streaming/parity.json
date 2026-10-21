@@ -1,0 +1,42 @@
+{
+  "predictions stored": {
+    "ok": true,
+    "detail": "23,004 documents"
+  },
+  "one prediction per cleaned-grid row of every finalized slot": {
+    "ok": true,
+    "detail": "expected 23,004, stored 23,004, missing 0, extra 0"
+  },
+  "newest 1 slot(s) held back until later events arrive (grace)": {
+    "ok": true,
+    "detail": "last finalized slot 4988950, last data slot 4988951"
+  },
+  "stream predictions compared with batch scoring": {
+    "ok": true,
+    "detail": "22,893 of 22,893 batch rows (111 stream rows have no Phase 3 feature row: label unobserved)"
+  },
+  "probabilities identical to batch scoring (max |dp| < 1e-6)": {
+    "ok": true,
+    "detail": "max |dp| = 5.30e-07, mean 1.70e-08"
+  },
+  "alert decisions identical to batch scoring": {
+    "ok": true,
+    "detail": "0 differ of 2,953 alerts"
+  },
+  "complete features on every row that Phase 3 keeps; incomplete rows are exactly those it drops": {
+    "ok": true,
+    "detail": "111 stream-only rows (103 with null features, scored through the model's Imputer); 0 of the 22,893 comparable rows have a null feature"
+  },
+  "sensor windows stored": {
+    "ok": true,
+    "detail": "22,356 finalized windows"
+  },
+  "sensor windows equal the pandas aggregation (n, mean, min, max, congested)": {
+    "ok": true,
+    "detail": "22,356 windows, 0 differ"
+  },
+  "network windows equal the pandas aggregation": {
+    "ok": true,
+    "detail": "69 windows, 0 differ"
+  }
+}

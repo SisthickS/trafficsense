@@ -1,0 +1,42 @@
+{
+  "qid": "q9",
+  "title": "Combined congestion severity and burden",
+  "question": "Which sensors and days carry the greatest overall congestion burden when frequency, intensity, duration and travel-time reliability are combined, and is the ranking robust?",
+  "findings": [
+    "Highest burden: sensor **400069** (CSBI 0.87): 20.8% of working-day readings congested, 77.7% below free flow while congested, 237-min average episodes, PTI 6.5 (to be on time 95% of the time, a traveller must budget 6.5\u00d7 the free-flow travel time).",
+    "Burden is concentrated: the 10 highest-CSBI sensors (3.1% of sensors) carry 11.2% of all congested hours per working day; network peak TTI averages 1.44, with a mean excess of 23 s per mile in the peaks.",
+    "The ranking is robust: dropping any single component keeps Spearman \u03c1 \u2265 0.98 with the full index and at least 8/10 of the top 10.",
+    "Components are related but not redundant (Spearman: frequency\u2013unreliability 0.89, frequency\u2013intensity 0.48, frequency\u2013duration 0.86).",
+    "Worst day for the network: Wed 2017-01-18 with 650 congested sensor-hours (working-day mean 428); peak TTI that day 1.66."
+  ],
+  "implications": [
+    "The CSBI gives the dashboard a single, explainable ranking (with component breakdown) for prioritising sensors.",
+    "TTI/PTI use standard FHWA reliability measures, so results are comparable with published mobility reports.",
+    "High-PTI sensors are where predictions add the most value to travellers, because travel time is least reliable there."
+  ],
+  "limitations": [
+    "No traffic volumes in PEMS-BAY, so burden is per sensor-reading, not per vehicle (vehicle-hours of delay cannot be computed).",
+    "Equal weights are a transparent default; the robustness table shows the ranking is not driven by any one component.",
+    "Free-flow speed comes from the training period (Jan\u2013May 7) for consistency with the model features."
+  ],
+  "metrics": {
+    "top_sensor": 400069,
+    "top10_share_hours": 0.11201003204204543,
+    "min_robust_spearman": 0.9801254924799421,
+    "min_top10_overlap": 8,
+    "network_mean_peak_tti": 1.4377132458510684
+  },
+  "tables": {
+    "top_sensors": "tables/q9_top_sensors.csv",
+    "robustness": "tables/q9_robustness.csv",
+    "component_correlation": "tables/q9_component_correlation.csv",
+    "worst_days": "tables/q9_worst_days.csv",
+    "all_sensors": "tables/q9_all_sensors.csv",
+    "daily": "tables/q9_daily.csv"
+  },
+  "figures": [
+    "../figures/analytics/q9_top_csbi.png",
+    "../figures/analytics/q9_map_and_daily.png"
+  ],
+  "seconds": 10.9
+}

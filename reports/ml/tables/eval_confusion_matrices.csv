@@ -1,0 +1,21 @@
+model,label,point,split,threshold,tp,fp,fn,tn
+persistence,Persistence (next = now),f1,val,0.5,78621.0,6144.0,6148.0,1570717.0
+persistence,Persistence (next = now),f1,test,0.5,126249.0,10606.0,10610.0,3183907.0
+persistence,Persistence (next = now),cost,val,0.5,78621.0,6144.0,6148.0,1570717.0
+persistence,Persistence (next = now),cost,test,0.5,126249.0,10606.0,10610.0,3183907.0
+historical_profile,Historical slot profile,f1,val,0.278,65135.0,19597.0,19634.0,1557264.0
+historical_profile,Historical slot profile,f1,test,0.278,103638.0,49976.0,33221.0,3144537.0
+historical_profile,Historical slot profile,cost,val,0.062,76725.0,60340.0,8044.0,1516521.0
+historical_profile,Historical slot profile,cost,test,0.062,121186.0,131793.0,15673.0,3062720.0
+logistic_regression,Logistic regression,f1,val,0.918,80529.0,7038.0,4240.0,1569823.0
+logistic_regression,Logistic regression,f1,test,0.918,129635.0,12334.0,7224.0,3182179.0
+logistic_regression,Logistic regression,cost,val,0.686,83832.0,17388.0,937.0,1559473.0
+logistic_regression,Logistic regression,cost,test,0.686,135120.0,30425.0,1739.0,3164088.0
+decision_tree,Decision tree,f1,val,0.9,80702.0,8249.0,4067.0,1568612.0
+decision_tree,Decision tree,f1,test,0.9,129894.0,14408.0,6965.0,3180105.0
+decision_tree,Decision tree,cost,val,0.726,83971.0,19968.0,798.0,1556893.0
+decision_tree,Decision tree,cost,test,0.726,135441.0,35529.0,1418.0,3158984.0
+random_forest,Random forest,f1,val,0.918,80108.0,7163.0,4661.0,1569698.0
+random_forest,Random forest,f1,test,0.918,128815.0,12573.0,8044.0,3181940.0
+random_forest,Random forest,cost,val,0.572,84008.0,19333.0,761.0,1557528.0
+random_forest,Random forest,cost,test,0.572,135420.0,33883.0,1439.0,3160630.0

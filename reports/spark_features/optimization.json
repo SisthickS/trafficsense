@@ -1,0 +1,282 @@
+{
+  "name": "optimization",
+  "title": "Caching, persistence & shuffle analysis",
+  "environment": {
+    "generated_at_utc": "2026-10-20T11:32:09+00:00",
+    "spark_version": "3.5.9",
+    "python": "3.11.17",
+    "master": "local[*]",
+    "default_parallelism": 12,
+    "cpu_count": 12,
+    "ram_gb": 7.6,
+    "driver_memory": "3g",
+    "shuffle_partitions": "48",
+    "aqe_enabled": "true",
+    "scratch_dir": "/home/wsluser/.cache/trafficsense/bench",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.43"
+  },
+  "headline": [
+    "Caching: reusing the windowed DataFrame took 0.57s with persist(MEMORY_AND_DISK_DESER) vs 11.10s uncached (19\u00d7 faster; uncached recomputed the window and shuffled 333.7 MB). End-to-end 10.76s vs 14.45s, because the first action pays to materialise the cache.",
+    "Footprint: cache() 464.0 MB memory + 0 B disk; DISK_ONLY 324.7 MB disk; MEMORY_ONLY cached 48 partition(s). unpersist() left 0 storage entries.",
+    "SQL CACHE TABLE is eager (9.71s, isCached=True); the follow-up query took 0.49s; UNCACHE TABLE \u2192 isCached=False.",
+    "Joins: broadcast hash 0.90s / 0 B shuffled vs sort-merge 3.25s / 167.2 MB vs shuffle hash 3.48s / 167.2 MB.",
+    "Aggregation over 2,890,110 readings: RDD groupByKey shuffled 8.2 MB vs reduceByKey 4.6 KB and DataFrame groupBy 7.6 KB; times 7.24s / 6.41s / 0.20s; results agree: True."
+  ],
+  "caching": [
+    {
+      "strategy": "none",
+      "storage_level": "-",
+      "first_action_s": 3.353,
+      "reuse_actions_s": 11.100999999999999,
+      "total_s": 14.454,
+      "shuffle_write_bytes": 349862625,
+      "stages_skipped": 5,
+      "memory_bytes": 0,
+      "disk_bytes": 0,
+      "cached_partitions": 0,
+      "is_cached": false,
+      "per_action_s": {
+        "a1_congestion_by_hour": 3.353,
+        "a2_sudden_drops_count": 6.362,
+        "a3_max_drop_by_sensor": 4.739
+      },
+      "per_action_shuffle": [
+        8376,
+        174927567,
+        174926682
+      ]
+    },
+    {
+      "strategy": "cache()",
+      "storage_level": "Disk Memory Deserialized 1x Replicated",
+      "first_action_s": 12.203,
+      "reuse_actions_s": 1.564,
+      "total_s": 13.767,
+      "shuffle_write_bytes": 236866766,
+      "stages_skipped": 8,
+      "memory_bytes": 486528408,
+      "disk_bytes": 0,
+      "cached_partitions": 48,
+      "is_cached": true,
+      "per_action_s": {
+        "a1_congestion_by_hour": 12.203,
+        "a2_sudden_drops_count": 0.654,
+        "a3_max_drop_by_sensor": 0.91
+      },
+      "per_action_shuffle": [
+        236863934,
+        2832,
+        0
+      ],
+      "after_unpersist_storage_entries": 0,
+      "after_unpersist_is_cached": false
+    },
+    {
+      "strategy": "persist(MEMORY_ONLY)",
+      "storage_level": "Memory Serialized 1x Replicated",
+      "first_action_s": 10.799,
+      "reuse_actions_s": 1.162,
+      "total_s": 11.960999999999999,
+      "shuffle_write_bytes": 236866766,
+      "stages_skipped": 8,
+      "memory_bytes": 340474117,
+      "disk_bytes": 0,
+      "cached_partitions": 48,
+      "is_cached": true,
+      "per_action_s": {
+        "a1_congestion_by_hour": 10.799,
+        "a2_sudden_drops_count": 0.431,
+        "a3_max_drop_by_sensor": 0.731
+      },
+      "per_action_shuffle": [
+        236863934,
+        2832,
+        0
+      ],
+      "after_unpersist_storage_entries": 0,
+      "after_unpersist_is_cached": false
+    },
+    {
+      "strategy": "persist(DISK_ONLY)",
+      "storage_level": "Disk Serialized 1x Replicated",
+      "first_action_s": 10.325,
+      "reuse_actions_s": 0.862,
+      "total_s": 11.187,
+      "shuffle_write_bytes": 236866766,
+      "stages_skipped": 8,
+      "memory_bytes": 0,
+      "disk_bytes": 340474117,
+      "cached_partitions": 48,
+      "is_cached": true,
+      "per_action_s": {
+        "a1_congestion_by_hour": 10.325,
+        "a2_sudden_drops_count": 0.388,
+        "a3_max_drop_by_sensor": 0.474
+      },
+      "per_action_shuffle": [
+        236863934,
+        2832,
+        0
+      ],
+      "after_unpersist_storage_entries": 0,
+      "after_unpersist_is_cached": false
+    },
+    {
+      "strategy": "persist(MEMORY_AND_DISK_DESER)",
+      "storage_level": "Disk Memory Deserialized 1x Replicated",
+      "first_action_s": 10.185,
+      "reuse_actions_s": 0.571,
+      "total_s": 10.756,
+      "shuffle_write_bytes": 236866766,
+      "stages_skipped": 8,
+      "memory_bytes": 486528408,
+      "disk_bytes": 0,
+      "cached_partitions": 48,
+      "is_cached": true,
+      "per_action_s": {
+        "a1_congestion_by_hour": 10.185,
+        "a2_sudden_drops_count": 0.173,
+        "a3_max_drop_by_sensor": 0.398
+      },
+      "per_action_shuffle": [
+        236863934,
+        2832,
+        0
+      ],
+      "after_unpersist_storage_entries": 0,
+      "after_unpersist_is_cached": false
+    }
+  ],
+  "sql_cache_table": {
+    "cache_table_s": 9.709,
+    "query_s": 0.492,
+    "is_cached": true,
+    "after_uncache_is_cached": false,
+    "memory_bytes": 486528408
+  },
+  "joins": [
+    {
+      "case": "join_broadcast_hash",
+      "seconds_median": 0.902,
+      "seconds_min": 0.852,
+      "numTasks": 13,
+      "inputBytes": 51232459,
+      "inputRecords": 16938025,
+      "outputBytes": 0,
+      "shuffleReadBytes": 0,
+      "shuffleReadRecords": 0,
+      "shuffleWriteBytes": 0,
+      "shuffleWriteRecords": 0,
+      "memoryBytesSpilled": 0,
+      "diskBytesSpilled": 0,
+      "executorRunTime": 4108,
+      "result": null,
+      "strategy": "broadcast_hash",
+      "join_node": "BroadcastHashJoin",
+      "exchanges": 1
+    },
+    {
+      "case": "join_sort_merge",
+      "seconds_median": 3.245,
+      "seconds_min": 3.117,
+      "numTasks": 28,
+      "inputBytes": 51232459,
+      "inputRecords": 16938025,
+      "outputBytes": 0,
+      "shuffleReadBytes": 175349597,
+      "shuffleReadRecords": 16938025,
+      "shuffleWriteBytes": 175349597,
+      "shuffleWriteRecords": 16938025,
+      "memoryBytesSpilled": 0,
+      "diskBytesSpilled": 0,
+      "executorRunTime": 25566,
+      "result": null,
+      "strategy": "sort_merge",
+      "join_node": "SortMergeJoin",
+      "exchanges": 2
+    },
+    {
+      "case": "join_shuffle_hash",
+      "seconds_median": 3.484,
+      "seconds_min": 3.205,
+      "numTasks": 28,
+      "inputBytes": 51232459,
+      "inputRecords": 16938025,
+      "outputBytes": 0,
+      "shuffleReadBytes": 175349597,
+      "shuffleReadRecords": 16938025,
+      "shuffleWriteBytes": 175349597,
+      "shuffleWriteRecords": 16938025,
+      "memoryBytesSpilled": 0,
+      "diskBytesSpilled": 0,
+      "executorRunTime": 27021,
+      "result": null,
+      "strategy": "shuffle_hash",
+      "join_node": "ShuffledHashJoin",
+      "exchanges": 2
+    }
+  ],
+  "aggregation": {
+    "rows_input": 2890110,
+    "month": "2017-01",
+    "rows": [
+      {
+        "case": "agg_DataFrame groupBy().agg(avg)",
+        "seconds_median": 0.196,
+        "seconds_min": 0.182,
+        "numTasks": 6,
+        "inputBytes": 7859331,
+        "inputRecords": 290,
+        "outputBytes": 0,
+        "shuffleReadBytes": 7753,
+        "shuffleReadRecords": 325,
+        "shuffleWriteBytes": 7753,
+        "shuffleWriteRecords": 325,
+        "memoryBytesSpilled": 0,
+        "diskBytesSpilled": 0,
+        "executorRunTime": 115,
+        "result": null,
+        "method": "DataFrame groupBy().agg(avg)"
+      },
+      {
+        "case": "agg_RDD reduceByKey",
+        "seconds_median": 6.413,
+        "seconds_min": 6.191,
+        "numTasks": 10,
+        "inputBytes": 7859331,
+        "inputRecords": 290,
+        "outputBytes": 0,
+        "shuffleReadBytes": 4700,
+        "shuffleReadRecords": 20,
+        "shuffleWriteBytes": 4700,
+        "shuffleWriteRecords": 20,
+        "memoryBytesSpilled": 0,
+        "diskBytesSpilled": 0,
+        "executorRunTime": 6786,
+        "result": null,
+        "method": "RDD reduceByKey"
+      },
+      {
+        "case": "agg_RDD groupByKey",
+        "seconds_median": 7.241,
+        "seconds_min": 7.157,
+        "numTasks": 10,
+        "inputBytes": 7859331,
+        "inputRecords": 290,
+        "outputBytes": 0,
+        "shuffleReadBytes": 8591918,
+        "shuffleReadRecords": 25,
+        "shuffleWriteBytes": 8591918,
+        "shuffleWriteRecords": 25,
+        "memoryBytesSpilled": 0,
+        "diskBytesSpilled": 0,
+        "executorRunTime": 7966,
+        "result": null,
+        "method": "RDD groupByKey"
+      }
+    ],
+    "results_agree": true
+  },
+  "data_description": "cleaned PEMS-BAY readings, all 6 months, 16,937,700 rows",
+  "repeats": 3
+}

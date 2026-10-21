@@ -1,0 +1,31 @@
+# TrafficSense Python dependencies (Python 3.11).
+# pyspark MUST equal the SPARK_HOME version (3.5.9). numpy<2 for Spark 3.5 MLlib/pandas compatibility.
+
+# Spark + dataframes
+pyspark==3.5.9
+numpy==1.26.4
+pandas==2.2.3
+pyarrow==17.0.0
+
+# HDF5 reader (only for the Hugging Face .h5 fallback source)
+tables==3.10.1
+
+# EDA / visualization
+matplotlib==3.9.4
+seaborn==0.13.2
+jupyterlab==4.2.5
+ipykernel==6.29.5
+nbconvert==7.16.4
+
+# Testing
+pytest==8.3.4
+
+# Streaming (Phase 8): Kafka producer/admin client and MongoDB driver (Spark's Kafka source is loaded via spark.jars.packages)
+confluent-kafka==2.16.0
+pymongo==4.19.0
+
+# API (Phase 9): FastAPI backend, settings from environment / .env, HTTP client for tests and verification
+fastapi==0.156.4
+uvicorn==0.54.0
+pydantic-settings==2.16.1
+httpx==0.28.1

@@ -1,0 +1,447 @@
+{
+  "dataset": "pems-bay",
+  "raw_dir": "/mnt/c/Users/ssis/Desktop/bdaa/data/raw/pems_bay",
+  "generated_at_utc": "2026-10-20T08:07:52+00:00",
+  "spec": {
+    "dataset": "pems-bay",
+    "n_sensors": 325,
+    "expected_rows": 52116,
+    "interval_seconds": 300,
+    "local_timezone": "America/Los_Angeles",
+    "timestamp_format": "yyyy-MM-dd HH:mm:ss",
+    "lat_range": [
+      36.9,
+      38.2
+    ],
+    "lon_range": [
+      -122.6,
+      -121.5
+    ],
+    "max_plausible_speed": 100.0,
+    "locations_has_header": false
+  },
+  "overall_status": "PASS",
+  "duration_seconds": 57.8,
+  "status_counts": {
+    "PASS": 12,
+    "WARN": 0,
+    "FAIL": 0,
+    "SKIP": 0
+  },
+  "profile": {
+    "spark_version": "3.5.9",
+    "raw_csv_mb": 85.7,
+    "sensors": 325,
+    "timestamp_rows": 52116,
+    "sensor_readings": 16937700,
+    "interval_minutes": 5,
+    "min_ts": "2017-01-01 00:00:00",
+    "max_ts": "2017-06-30 23:55:00",
+    "span_days": 181.0,
+    "missing_rate": 3.1e-05,
+    "flatline_share": 0.006956
+  },
+  "checks": [
+    {
+      "id": "C01",
+      "name": "Manifest & files present",
+      "status": "PASS",
+      "summary": "3/3 manifest files present",
+      "details": {
+        "source": "zenodo",
+        "landing_page": "https://doi.org/10.5281/zenodo.5724362",
+        "retrieved_at_utc": "2026-10-20T08:07:48+00:00",
+        "missing": []
+      }
+    },
+    {
+      "id": "C02",
+      "name": "Raw data integrity",
+      "status": "PASS",
+      "summary": "raw files unchanged since download (sha256 match)",
+      "details": {
+        "files": [
+          {
+            "file": "PEMS-BAY.csv",
+            "role": "readings",
+            "size": 85718439,
+            "sha256": "c39dc8f5f3a7f1e9e9deeab1f3fdfa7b87d2b4e45b4075d4c3bd3c62c3051ef2",
+            "verified": true,
+            "derived_from": null
+          },
+          {
+            "file": "adj_mx_PEMS-BAY.pkl",
+            "role": "adjacency",
+            "size": 1681480,
+            "sha256": "116275f5704d0d492018e14c047f7ae5004385b450aa907f88424055a4a97370",
+            "verified": true,
+            "derived_from": null
+          },
+          {
+            "file": "graph_sensor_locations_bay.csv",
+            "role": "sensor_locations",
+            "size": 9750,
+            "sha256": "276ee01059610774d4e59572507f7e32eaac21f1f5882fcd9e3d7d426a4b7a6c",
+            "verified": true,
+            "derived_from": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "C03",
+      "name": "Header / schema",
+      "status": "PASS",
+      "summary": "1 timestamp column + 325 numeric, unique sensor columns",
+      "details": {
+        "n_columns": 326,
+        "n_sensor_columns": 325,
+        "first_column_label": "",
+        "first_sensors": [
+          "400001",
+          "400017",
+          "400030",
+          "400040",
+          "400045"
+        ],
+        "last_sensors": [
+          "413845",
+          "413877",
+          "413878",
+          "414284",
+          "414694"
+        ],
+        "inferred_schema": {
+          "timestamp": "string -> timestamp (yyyy-MM-dd HH:mm:ss)",
+          "<sensor_id> x N": "double (speed, mph)"
+        }
+      }
+    },
+    {
+      "id": "C04",
+      "name": "Line structure (RDD scan)",
+      "status": "PASS",
+      "summary": "52,117 lines, 0 with a field count other than 326",
+      "details": {
+        "total_lines": 52117,
+        "rdd_partitions": 3,
+        "field_count_distribution": {
+          "326": 52117
+        }
+      }
+    },
+    {
+      "id": "C05",
+      "name": "Typed parse (explicit schema, PERMISSIVE)",
+      "status": "PASS",
+      "summary": "0 malformed rows out of 52,116",
+      "details": {
+        "malformed_rows": 0,
+        "sample_malformed": []
+      }
+    },
+    {
+      "id": "C06",
+      "name": "Record counts",
+      "status": "PASS",
+      "summary": "52,116 timestamps x 325 sensors = 16,937,700 readings (reference: 52,116 timestamps)",
+      "details": {
+        "timestamp_rows": 52116,
+        "sensors": 325,
+        "sensor_readings": 16937700,
+        "expected_timestamp_rows": 52116
+      }
+    },
+    {
+      "id": "C07",
+      "name": "Timestamps",
+      "status": "PASS",
+      "summary": "2017-01-01 00:00:00 -> 2017-06-30 23:55:00 (181.0 days), 5-min grid of 52,128 slots, 12 missing slot(s) in 1 gap(s) - all explained by DST",
+      "details": {
+        "min_ts": "2017-01-01 00:00:00",
+        "max_ts": "2017-06-30 23:55:00",
+        "span_days": 181.0,
+        "unparseable": 0,
+        "duplicates": 0,
+        "out_of_order": 0,
+        "off_grid": 0,
+        "expected_grid_slots": 52128,
+        "missing_slots": 12,
+        "gaps": [
+          {
+            "start": "2017-03-12 02:00:00",
+            "end": "2017-03-12 02:55:00",
+            "missing_slots": 12,
+            "minutes": 60,
+            "cause": "DST spring-forward (local time does not exist)"
+          }
+        ],
+        "interval_histogram_seconds": {
+          "300": 52114,
+          "3900": 1
+        },
+        "timezone_note": "naive local wall-clock (America/Los_Angeles); parsed with Spark session tz UTC so values are stored verbatim"
+      }
+    },
+    {
+      "id": "C08",
+      "name": "Missing values",
+      "status": "PASS",
+      "summary": "521 of 16,937,700 readings missing (0.003%): 0 null/NaN, 521 zero-speed, 0 negative",
+      "details": {
+        "readings": 16937700,
+        "missing": 521,
+        "missing_rate": 3.1e-05,
+        "nulls_or_nan": 0,
+        "zero_speed": 521,
+        "negative": 0,
+        "above_plausible_max": 0,
+        "plausible_max_mph": 100.0,
+        "sensors_with_any_missing": 270,
+        "sensors_fully_missing": 0,
+        "sensors_over_20pct_missing": 0,
+        "sensor_missing_rate_histogram": {
+          "(0,1%]": 270,
+          "0%": 55
+        },
+        "timestamps_all_sensors_missing": 0,
+        "top10_sensors_by_missing_rate": [
+          {
+            "sensor_id": 404370,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 404444,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 404461,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 405613,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 407364,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 407373,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 408907,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 409526,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 4,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 4,
+            "missing_rate": 8e-05
+          },
+          {
+            "sensor_id": 400174,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 3,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 3,
+            "missing_rate": 6e-05
+          },
+          {
+            "sensor_id": 400292,
+            "n": 52116,
+            "nulls": 0,
+            "zeros": 3,
+            "negatives": 0,
+            "too_high": 0,
+            "missing": 3,
+            "missing_rate": 6e-05
+          }
+        ],
+        "rule": "missing := null OR NaN OR speed == 0 OR speed < 0 (DCRNN encodes gaps as 0.0)"
+      }
+    },
+    {
+      "id": "C09",
+      "name": "Speed value distribution",
+      "status": "PASS",
+      "summary": "valid speeds 3.0-85.1 mph, median 65.3, mean 62.62, 0 above 100 mph",
+      "details": {
+        "n_valid": 16937179,
+        "min": 3.0,
+        "max": 85.1,
+        "mean": 62.621,
+        "stddev": 9.588,
+        "p01": 19.6,
+        "p05": 40.0,
+        "p25": 62.2,
+        "p50": 65.3,
+        "p75": 67.5,
+        "p95": 69.8,
+        "p99": 71.8,
+        "above_plausible_max": 0
+      }
+    },
+    {
+      "id": "C10",
+      "name": "Flat-line runs (stuck/imputed sensors)",
+      "status": "PASS",
+      "summary": "3,090 runs >= 60 min of identical speed across 184 sensors, covering 117,820 readings (0.696%)",
+      "details": {
+        "min_run_slots": 12,
+        "runs": 3090,
+        "sensors_affected": 184,
+        "readings_in_runs": 117820,
+        "share": 0.006956,
+        "longest_runs": [
+          {
+            "sensor_id": 407190,
+            "run_id": 19438,
+            "length": 384,
+            "speed_mph": 69.0,
+            "start": "2017-03-12 16:00:00",
+            "hours": 32.0
+          },
+          {
+            "sensor_id": 407180,
+            "run_id": 41332,
+            "length": 371,
+            "speed_mph": 69.0,
+            "start": "2017-05-31 17:05:00",
+            "hours": 30.9
+          },
+          {
+            "sensor_id": 407206,
+            "run_id": 38294,
+            "length": 371,
+            "speed_mph": 69.0,
+            "start": "2017-05-31 17:05:00",
+            "hours": 30.9
+          },
+          {
+            "sensor_id": 400519,
+            "run_id": 10052,
+            "length": 288,
+            "speed_mph": 68.1,
+            "start": "2017-02-16 00:00:00",
+            "hours": 24.0
+          },
+          {
+            "sensor_id": 400100,
+            "run_id": 29319,
+            "length": 288,
+            "speed_mph": 68.1,
+            "start": "2017-04-20 00:00:00",
+            "hours": 24.0
+          }
+        ]
+      }
+    },
+    {
+      "id": "C11",
+      "name": "Sensor locations",
+      "status": "PASS",
+      "summary": "325 sensors with coordinates, 0 reading-sensors lack coordinates, 0 outside expected bounding box",
+      "details": {
+        "rows": 325,
+        "distinct_ids": 325,
+        "null_fields": 0,
+        "out_of_bbox": 0,
+        "bbox_observed": {
+          "lat": [
+            37.250424,
+            37.427486
+          ],
+          "lon": [
+            -122.079539,
+            -121.840267
+          ]
+        },
+        "bbox_expected": {
+          "lat": [
+            36.9,
+            38.2
+          ],
+          "lon": [
+            -122.6,
+            -121.5
+          ]
+        },
+        "sensors_without_location": [],
+        "locations_without_readings": []
+      }
+    },
+    {
+      "id": "C12",
+      "name": "Adjacency matrix (graph)",
+      "status": "PASS",
+      "summary": "325x325 float32, sensor order matches CSV header",
+      "details": {
+        "shape": [
+          325,
+          325
+        ],
+        "dtype": "float32",
+        "min": 0.0,
+        "max": 1.0,
+        "nonzero_edges": 2694,
+        "self_loops": 325,
+        "same_sensor_set": true,
+        "same_order": true,
+        "loader": "restricted unpickler (numpy arrays/builtins only)"
+      }
+    }
+  ],
+  "rejected_sources": {
+    "huggingface:witgaw/PEMS-BAY": "Pre-windowed ('augmented') samples: 12 input + 12 target steps per row, each reading duplicated ~24x with normalised time-of-day features. Not raw data; TrafficSense builds these windows itself with Spark window functions in Phase 5."
+  }
+}

@@ -1,0 +1,225 @@
+{
+  "dataset": "pems-bay",
+  "spark_version": "3.5.9",
+  "generated_at_utc": "2026-10-20T13:22:16+00:00",
+  "features_path": "/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/features",
+  "feature_columns": [
+    "hour",
+    "slot_of_day",
+    "day_of_week",
+    "is_weekend",
+    "is_holiday",
+    "tod_sin",
+    "tod_cos",
+    "dow_sin",
+    "dow_cos",
+    "speed",
+    "is_imputed",
+    "congested_now",
+    "speed_lag_5m",
+    "speed_lag_10m",
+    "speed_lag_15m",
+    "speed_lag_30m",
+    "speed_lag_60m",
+    "speed_target_slot_1d",
+    "speed_target_slot_1w",
+    "delta_5m",
+    "delta_15m",
+    "roll_mean_15m",
+    "roll_mean_30m",
+    "roll_mean_60m",
+    "roll_std_60m",
+    "roll_min_60m",
+    "congested_frac_60m",
+    "imputed_count_60m",
+    "nbr_up_speed",
+    "nbr_down_speed",
+    "nbr_up_congested_frac",
+    "nbr_down_congested_frac",
+    "latitude",
+    "longitude",
+    "in_degree",
+    "out_degree",
+    "ff_speed",
+    "speed_ratio_ff",
+    "sensor_congested_rate",
+    "hist_speed_next",
+    "hist_congested_rate_next"
+  ],
+  "label": "label",
+  "label_definition": "observed speed at t+5min < 35.0 mph",
+  "congestion_threshold_mph": 35.0,
+  "free_flow_threshold_mph": 60.0,
+  "horizon_minutes": 5,
+  "boundaries": {
+    "utc": {
+      "start": "2017-01-01 08:00:00",
+      "val_start": "2017-05-08 07:00:00",
+      "test_start": "2017-05-26 07:00:00",
+      "end": "2017-07-01 07:00:00"
+    },
+    "local": {
+      "start": "2017-01-01 00:00",
+      "val_start": "2017-05-08 00:00",
+      "test_start": "2017-05-26 00:00",
+      "end": "2017-07-01 00:00"
+    },
+    "purge_minutes": 60,
+    "local_timezone": "America/Los_Angeles"
+  },
+  "split_config": {
+    "train_frac": 0.7,
+    "val_frac": 0.1,
+    "purge_minutes": 60
+  },
+  "feature_config": {
+    "slots_per_day": 288,
+    "neighbor_batch_rows": 1000
+  },
+  "holidays": [
+    "2017-01-02",
+    "2017-01-16",
+    "2017-02-20",
+    "2017-05-29",
+    "2017-07-04",
+    "2017-09-04",
+    "2017-10-09",
+    "2017-11-10",
+    "2017-11-23",
+    "2017-12-25"
+  ],
+  "splits": {
+    "train": {
+      "rows": 11131321,
+      "positives": 424032,
+      "first_local": "2017-01-07 23:55",
+      "last_local": "2017-05-07 22:55",
+      "min_utc": "2017-01-08 07:55:00",
+      "max_utc": "2017-05-08 05:55:00",
+      "sensors": 325,
+      "tp": 390321,
+      "fp": 33686,
+      "fn": 33711,
+      "positive_rate": 0.03809359194654435,
+      "persistence": {
+        "precision": 0.9205531984141772,
+        "recall": 0.9204989246094635,
+        "f1": 0.9205260607118306
+      }
+    },
+    "val": {
+      "rows": 1661630,
+      "positives": 84769,
+      "first_local": "2017-05-08 00:00",
+      "last_local": "2017-05-25 22:55",
+      "min_utc": "2017-05-08 07:00:00",
+      "max_utc": "2017-05-26 05:55:00",
+      "sensors": 325,
+      "tp": 78621,
+      "fp": 6144,
+      "fn": 6148,
+      "positive_rate": 0.0510155690496681,
+      "persistence": {
+        "precision": 0.9275172535834365,
+        "recall": 0.9274734867699277,
+        "f1": 0.9274953696603631
+      }
+    },
+    "test": {
+      "rows": 3331372,
+      "positives": 136859,
+      "first_local": "2017-05-26 00:00",
+      "last_local": "2017-06-30 23:50",
+      "min_utc": "2017-05-26 07:00:00",
+      "max_utc": "2017-07-01 06:50:00",
+      "sensors": 325,
+      "tp": 126249,
+      "fp": 10606,
+      "fn": 10610,
+      "positive_rate": 0.04108187257382244,
+      "persistence": {
+        "precision": 0.9225019180884878,
+        "recall": 0.922474955976589,
+        "f1": 0.9224884368355291
+      }
+    }
+  },
+  "total_rows": 16937700,
+  "kept_rows": 16124323,
+  "dropped_rows": {
+    "warmup_7d": 652978,
+    "feature_gap": 95568,
+    "current_speed_missing": 54898,
+    "purge_gap": 7800,
+    "target_not_observed": 2133
+  },
+  "null_counts_in_output": {},
+  "ff_speed": {
+    "min": 62.20000076293945,
+    "median": 67.80000305175781,
+    "max": 72.19999694824219
+  },
+  "threshold_sensitivity": [
+    {
+      "rule": "speed < 25 mph",
+      "positive_rate": 0.018273030528292412,
+      "selected": false
+    },
+    {
+      "rule": "speed < 30 mph",
+      "positive_rate": 0.027489556959379744,
+      "selected": false
+    },
+    {
+      "rule": "speed < 35 mph",
+      "positive_rate": 0.037370914965482886,
+      "selected": true
+    },
+    {
+      "rule": "speed < 40 mph",
+      "positive_rate": 0.04764012657555499,
+      "selected": false
+    },
+    {
+      "rule": "speed < 45 mph",
+      "positive_rate": 0.05820109394476333,
+      "selected": false
+    },
+    {
+      "rule": "speed < 50 mph",
+      "positive_rate": 0.07099485842752344,
+      "selected": false
+    },
+    {
+      "rule": "speed < 60 mph",
+      "positive_rate": 0.1639690166361583,
+      "selected": false
+    },
+    {
+      "rule": "speed < 50% of sensor free-flow",
+      "positive_rate": 0.03478100204718809,
+      "disagreement_with_35mph": 0.0028238241926239922,
+      "selected": false
+    },
+    {
+      "rule": "speed < 60% of sensor free-flow",
+      "positive_rate": 0.04829499369917338,
+      "disagreement_with_35mph": 0.010924078733690494,
+      "selected": false
+    },
+    {
+      "rule": "speed < 70% of sensor free-flow",
+      "positive_rate": 0.06274226600238117,
+      "disagreement_with_35mph": 0.02537135103689828,
+      "selected": false
+    }
+  ],
+  "episodes": {
+    "episodes": 35146,
+    "congested_readings": 442550,
+    "share_in_episodes_ge_15min": 0.9676307761834821,
+    "median_episode_minutes": 30,
+    "longest_episode_hours": 13.4
+  },
+  "duration_seconds": 563.3
+}

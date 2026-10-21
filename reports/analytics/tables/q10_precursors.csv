@@ -1,0 +1,17 @@
+scope,feature,description,mean_onset,mean_no_onset,smd,onset_rows,no_onset_rows
+all non-congested rows,speed_ratio_ff,speed / free-flow speed,0.5664166089552115,0.9511250144228809,-5.738689384654814,33711,10673603
+all non-congested rows,roll_std_60m,speed std over the last hour,6.487850199822929,1.3998454323920164,1.8474416683487753,33711,10673603
+all non-congested rows,hist_congested_rate_next,historical congestion rate for the target slot,0.37178022515548426,0.013738924459250275,1.7283570298536945,33711,10673603
+all non-congested rows,nbr_down_congested_frac,share of downstream neighbours congested,0.2928272158848782,0.018858997974027774,1.2518688677489471,33711,10673603
+all non-congested rows,nbr_up_congested_frac,share of upstream neighbours congested,0.26501324260105935,0.020201348922194537,1.1070880665086364,33711,10673603
+all non-congested rows,delta_15m,speed change over the last 15 min (mph),-7.331853111977501,0.12690057884566555,-0.9486389507562544,33711,10673603
+all non-congested rows,delta_5m,speed change over the last 5 min (mph),-4.079576426055076,0.03391873385760127,-0.8846089439430944,33711,10673603
+all non-congested rows,congested_frac_60m,share of the last hour congested,0.17278237615374858,0.009285329133379431,0.8205709270261848,33711,10673603
+at-risk band 35–50 mph,speed_ratio_ff,speed / free-flow speed,0.5621302541939049,0.6488256620415132,-1.5019398380800622,33156,348004
+at-risk band 35–50 mph,hist_congested_rate_next,historical congestion rate for the target slot,0.37510277219271737,0.16053068428312364,0.8406485849645541,33156,348004
+at-risk band 35–50 mph,delta_5m,speed change over the last 5 min (mph),-4.1361262182488145,0.00652952749202093,-0.7529700005950665,33156,348004
+at-risk band 35–50 mph,delta_15m,speed change over the last 15 min (mph),-7.444706847086964,-0.814451840261998,-0.6886727143844904,33156,348004
+at-risk band 35–50 mph,roll_std_60m,speed std over the last hour,6.501359729660323,4.862283957752799,0.5112179895257557,33156,348004
+at-risk band 35–50 mph,nbr_down_congested_frac,share of downstream neighbours congested,0.2950773955017642,0.18598127433176215,0.39286251191487653,33156,348004
+at-risk band 35–50 mph,congested_frac_60m,share of the last hour congested,0.17413389277949504,0.12830647582069019,0.1729565137513403,33156,348004
+at-risk band 35–50 mph,nbr_up_congested_frac,share of upstream neighbours congested,0.26809655735375926,0.2186406599116948,0.17054857445008112,33156,348004

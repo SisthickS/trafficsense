@@ -1,0 +1,5 @@
+variant,spearman_vs_csbi,top10_overlap
+without frequency,0.981061293947406,8
+without intensity,0.9801254924799421,10
+without duration,0.9935783814130322,8
+without unreliability,0.9879870235253295,8

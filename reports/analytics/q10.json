@@ -1,0 +1,50 @@
+{
+  "qid": "q10",
+  "title": "Congestion onset and state transitions",
+  "question": "How does traffic move between free, slowed and congested states, how likely is a new congestion onset at each time and speed, and which signals precede an onset?",
+  "findings": [
+    "States are sticky: P(stay) = 0.983 free, 0.863 slowed, 0.922 congested, giving expected dwell times of 287, 36 and 64 min.",
+    "Congestion is almost always entered via 'slowed': P(free \u2192 congested) = 1.3e-05 vs P(slowed \u2192 congested) = 0.0240 (1,791\u00d7).",
+    "The first-order chain reproduces the state mix: stationary shares free 83.2%, slowed 12.8%, congested 3.9% vs observed free 83.2%, slowed 12.8%, congested 3.9%.",
+    "Onset hazard on working days peaks at **17:00** (2.08% of non-congested readings tip into congestion within 5 min). By speed: 23.4% in the 35\u201340 mph band vs 0.001% at \u2265 60 mph.",
+    "Strongest precursors in the at-risk band (|SMD|): speed_ratio_ff -1.50 (onset 0.56 vs 0.65); hist_congested_rate_next +0.84 (onset 0.38 vs 0.16); delta_5m -0.75 (onset -4.14 vs 0.01).",
+    "Speed trajectory before an onset (at-risk band, training split): 47.3 \u2192 38.0 mph over 30 min, vs 45.8 \u2192 43.4 mph without an onset."
+  ],
+  "implications": [
+    "Since onsets come almost exclusively from 'slowed', the dashboard can show an 'at risk' state (35\u201350 mph and falling) as an early warning before the model's congestion alert fires.",
+    "The strongest precursors (falling speed, congested neighbours, recurring slot) correspond to existing features, which supports the Phase 3 design (see Q17 for their measured contribution).",
+    "Long dwell times explain why persistence is a strong 5-minute baseline (Q16)."
+  ],
+  "limitations": [
+    "The Markov chain is first-order and pooled over sensors; real dynamics depend on longer history (captured by lags/rolling features).",
+    "SMD shows association, not causation; precursors overlap (correlated features)."
+  ],
+  "metrics": {
+    "p_stay": {
+      "free": 0.9825804802917586,
+      "slowed": 0.8629557133615497,
+      "congested": 0.9218538387653902
+    },
+    "dwell_min": {
+      "free": 287.0343203340121,
+      "slowed": 36.48455636236031,
+      "congested": 63.98266941083692
+    },
+    "p_free_to_congested": 1.3378719453021018e-05,
+    "p_slowed_to_congested": 0.0239626814564701,
+    "onset_peak_hour": 17,
+    "top_precursor": "speed_ratio_ff"
+  },
+  "tables": {
+    "transition_matrix": "tables/q10_transition_matrix.csv",
+    "onset_hazard_by_hour": "tables/q10_onset_hazard_by_hour.csv",
+    "onset_hazard_by_speed": "tables/q10_onset_hazard_by_speed.csv",
+    "precursors": "tables/q10_precursors.csv",
+    "pre_onset_trajectory": "tables/q10_pre_onset_trajectory.csv"
+  },
+  "figures": [
+    "../figures/analytics/q10_transitions.png",
+    "../figures/analytics/q10_precursors.png"
+  ],
+  "seconds": 86.2
+}

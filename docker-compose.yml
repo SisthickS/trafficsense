@@ -1,0 +1,63 @@
+# TrafficSense streaming infrastructure (Phase 8): single-node Kafka (KRaft, no ZooKeeper) + MongoDB.
+# Spark and the Python scripts run on the host (WSL) and reach both services on localhost.
+# Development setup: both ports are bound to 127.0.0.1 only and MongoDB runs without authentication.
+#
+#   docker compose up -d --wait        start (waits for the health checks)
+#   docker compose down                stop, keep data       (add -v to also delete the volumes)
+#
+# Memory budget on a 7.6 GB machine: Kafka 0.8 GB heap, MongoDB 0.5 GB cache; leave >= 4 GB for Spark.
+services:
+  kafka:
+    image: apache/kafka:3.9.1
+    container_name: trafficsense-kafka
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # single broker: internal topics cannot be replicated
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      # topics are created explicitly by replay_events.py (partitions, retention); never implicitly
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      # replayed events keep their ORIGINAL (2017) event time in the payload; record timestamps stay wall-clock,
+      # so time-based retention measures the replay, not the dataset
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx768m"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 10s
+
+  mongo:
+    image: mongo:7.0
+    container_name: trafficsense-mongo
+    restart: unless-stopped
+    command: ["mongod", "--wiredTigerCacheSizeGB", "0.5", "--bind_ip_all"]
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand({ping: 1}).ok' | grep -q 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
+
+volumes:
+  kafka-data:
+  mongo-data:

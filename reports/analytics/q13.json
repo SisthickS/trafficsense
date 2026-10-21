@@ -1,0 +1,44 @@
+{
+  "qid": "q13",
+  "title": "Missing data and sensor coverage bias",
+  "question": "Where and when are readings missing or invalid, is missingness related to congestion (so that rates and models are biased), and how evenly do sensors cover the network?",
+  "findings": [
+    "Data are 99.67% observed, 0.009% forward-filled and 0.32% missing. Almost all invalid readings come from stuck detectors (55,980), and they are concentrated: the worst 15 sensors hold 44.0% of all invalid readings.",
+    "Missingness by time: working-day share ranges 0.19%\u20130.46% by hour (highest at 20:00); worst day 2017-05-19 (1.61%, 218 sensors affected on the worst day).",
+    "There is a modest missing-not-at-random effect: hour-cells containing invalid readings have a congestion rate +0.57 pp (+20% relative) different from complete cells at the same hour (base 2.84%); invalid readings occur somewhat more often around congestion. Across sensors, Spearman \u03c1 between invalid share and congestion rate = 0.01.",
+    "Label loss: 1,294 stuck readings were below 35 mph (2.3% of stuck readings, 0.19% of all congested readings). They were removed as implausible flat lines and slightly understate congestion.",
+    "Model coverage after the warm-up: the feature table keeps 99.36% of observed rows. Dropped rows have congestion rate 2.84% vs 4.00% kept, a bias towards free-flow periods in what the model never sees.",
+    "Spatial coverage: 214 sensors have another sensor within 100 m (typically the opposite carriageway). Spacing to the nearest **road-graph** neighbour is a median 2.12 km (max 12.6 km); 135 sensors have no graph neighbour within 3 km, so congestion on those stretches is observed at a single point."
+  ],
+  "implications": [
+    "**Recommendation:** send the worst stuck-detector sensors for maintenance first; a handful of detectors cause most invalid data.",
+    "The cleaning rule for stuck congested readings is conservative; report congestion rates with that small known under-count, and keep the `quality` flag visible in the dashboard.",
+    "Evaluate the model separately for low-quality sensors; their feature gaps reduce coverage.",
+    "Isolated sensors represent long road sections. New detectors or probe data (GPS) would close the coverage gaps."
+  ],
+  "limitations": [
+    "The true speed during invalid periods is unknown, so the MNAR test can only use the observed readings around them.",
+    "Spatial coverage uses straight-line distance; road distance between sensors is longer."
+  ],
+  "metrics": {
+    "observed_share": 0.9966641869911499,
+    "mnar_diff_pp": 0.5700609424943522,
+    "stuck_congested_lost": 1294,
+    "isolated_sensors": 135,
+    "median_graph_spacing_km": 2.1169640218566412,
+    "colocated_sensors": 214
+  },
+  "tables": {
+    "quality": "tables/q13_quality.csv",
+    "issues": "tables/q13_issues.csv",
+    "worst_sensors": "tables/q13_worst_sensors.csv",
+    "mnar_by_hour": "tables/q13_mnar_by_hour.csv",
+    "model_coverage": "tables/q13_model_coverage.csv",
+    "isolated_sensors": "tables/q13_isolated_sensors.csv"
+  },
+  "figures": [
+    "../figures/analytics/q13_missingness.png",
+    "../figures/analytics/q13_coverage.png"
+  ],
+  "seconds": 25.7
+}

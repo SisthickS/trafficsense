@@ -1,0 +1,1121 @@
+===== explain(mode='simple') =====
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=true
++- == Final Plan ==
+   *(3) Sort [hour#874 ASC NULLS FIRST], true, 0
+   +- AQEShuffleRead coalesced
+      +- ShuffleQueryStage 1
+         +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3862]
+            +- *(2) HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)])
+               +- AQEShuffleRead coalesced
+                  +- ShuffleQueryStage 0
+                     +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3830]
+                        +- *(1) HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)])
+                           +- *(1) Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                              +- *(1) Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                                 +- *(1) ColumnarToRow
+                                    +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
++- == Initial Plan ==
+   Sort [hour#874 ASC NULLS FIRST], true, 0
+   +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3780]
+      +- HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)])
+         +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3777]
+            +- HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)])
+               +- Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                  +- Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                     +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+
+
+===== explain(mode='extended') =====
+== Parsed Logical Plan ==
+'Sort ['hour ASC NULLS FIRST], true
++- Aggregate [hour(ts_local#2, Some(UTC))], [hour(ts_local#2, Some(UTC)) AS hour#874, round((avg(cast((speed_mph#4 < cast(35 as float)) as int)) * cast(100 as double)), 2) AS congested_pct#885, round(avg(speed_mph#4), 2) AS avg_speed#887, count(1) AS readings#889L]
+   +- Filter ((quality#5 = observed) AND ((dayofweek(cast(ts_local#2 as date)) >= 2) AND (dayofweek(cast(ts_local#2 as date)) <= 6)))
+      +- Relation [sensor_id#0,ts_utc#1,ts_local#2,speed_raw#3,speed_mph#4,quality#5,issue#6,date_local#7,month#8] parquet
+
+== Analyzed Logical Plan ==
+hour: int, congested_pct: double, avg_speed: double, readings: bigint
+Sort [hour#874 ASC NULLS FIRST], true
++- Aggregate [hour(ts_local#2, Some(UTC))], [hour(ts_local#2, Some(UTC)) AS hour#874, round((avg(cast((speed_mph#4 < cast(35 as float)) as int)) * cast(100 as double)), 2) AS congested_pct#885, round(avg(speed_mph#4), 2) AS avg_speed#887, count(1) AS readings#889L]
+   +- Filter ((quality#5 = observed) AND ((dayofweek(cast(ts_local#2 as date)) >= 2) AND (dayofweek(cast(ts_local#2 as date)) <= 6)))
+      +- Relation [sensor_id#0,ts_utc#1,ts_local#2,speed_raw#3,speed_mph#4,quality#5,issue#6,date_local#7,month#8] parquet
+
+== Optimized Logical Plan ==
+Sort [hour#874 ASC NULLS FIRST], true
++- Aggregate [_groupingexpression#943], [_groupingexpression#943 AS hour#874, round((avg(cast((speed_mph#4 < 35.0) as int)) * 100.0), 2) AS congested_pct#885, round(avg(speed_mph#4), 2) AS avg_speed#887, count(1) AS readings#889L]
+   +- Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+      +- Filter ((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND ((quality#5 = observed) AND ((dayofweek(cast(ts_local#2 as date)) >= 2) AND (dayofweek(cast(ts_local#2 as date)) <= 6))))
+         +- Relation [sensor_id#0,ts_utc#1,ts_local#2,speed_raw#3,speed_mph#4,quality#5,issue#6,date_local#7,month#8] parquet
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=true
++- == Final Plan ==
+   *(3) Sort [hour#874 ASC NULLS FIRST], true, 0
+   +- AQEShuffleRead coalesced
+      +- ShuffleQueryStage 1
+         +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3862]
+            +- *(2) HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)], output=[hour#874, congested_pct#885, avg_speed#887, readings#889L])
+               +- AQEShuffleRead coalesced
+                  +- ShuffleQueryStage 0
+                     +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3830]
+                        +- *(1) HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
+                           +- *(1) Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                              +- *(1) Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                                 +- *(1) ColumnarToRow
+                                    +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
++- == Initial Plan ==
+   Sort [hour#874 ASC NULLS FIRST], true, 0
+   +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3780]
+      +- HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)], output=[hour#874, congested_pct#885, avg_speed#887, readings#889L])
+         +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3777]
+            +- HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
+               +- Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                  +- Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                     +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+
+===== explain(mode='cost') =====
+== Optimized Logical Plan ==
+Sort [hour#874 ASC NULLS FIRST], true, Statistics(sizeInBytes=34.4 MiB)
++- Aggregate [_groupingexpression#943], [_groupingexpression#943 AS hour#874, round((avg(cast((speed_mph#4 < 35.0) as int)) * 100.0), 2) AS congested_pct#885, round(avg(speed_mph#4), 2) AS avg_speed#887, count(1) AS readings#889L], Statistics(sizeInBytes=34.4 MiB)
+   +- Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943], Statistics(sizeInBytes=15.3 MiB)
+      +- Filter ((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND ((quality#5 = observed) AND ((dayofweek(cast(ts_local#2 as date)) >= 2) AND (dayofweek(cast(ts_local#2 as date)) <= 6)))), Statistics(sizeInBytes=95.7 MiB)
+         +- Relation [sensor_id#0,ts_utc#1,ts_local#2,speed_raw#3,speed_mph#4,quality#5,issue#6,date_local#7,month#8] parquet, Statistics(sizeInBytes=95.7 MiB)
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=true
++- == Final Plan ==
+   *(3) Sort [hour#874 ASC NULLS FIRST], true, 0
+   +- AQEShuffleRead coalesced
+      +- ShuffleQueryStage 1
+         +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3862]
+            +- *(2) HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)], output=[hour#874, congested_pct#885, avg_speed#887, readings#889L])
+               +- AQEShuffleRead coalesced
+                  +- ShuffleQueryStage 0
+                     +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3830]
+                        +- *(1) HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
+                           +- *(1) Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                              +- *(1) Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                                 +- *(1) ColumnarToRow
+                                    +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
++- == Initial Plan ==
+   Sort [hour#874 ASC NULLS FIRST], true, 0
+   +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3780]
+      +- HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)], output=[hour#874, congested_pct#885, avg_speed#887, readings#889L])
+         +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3777]
+            +- HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
+               +- Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                  +- Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                     +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+
+
+===== explain(mode='codegen') =====
+Found 3 WholeStageCodegen subtrees.
+== Subtree 1 / 3 (maxMethodCodeSize:552; maxConstantPoolSize:387(0.59% used); numInnerClasses:2) ==
+*(1) HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
++- *(1) Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+   +- *(1) Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+Generated code:
+/* 001 */ public Object generate(Object[] references) {
+/* 002 */   return new GeneratedIteratorForCodegenStage1(references);
+/* 003 */ }
+/* 004 */
+/* 005 */ // codegenStageId=1
+/* 006 */ final class GeneratedIteratorForCodegenStage1 extends org.apache.spark.sql.execution.BufferedRowIterator {
+/* 007 */   private Object[] references;
+/* 008 */   private scala.collection.Iterator[] inputs;
+/* 009 */   private boolean hashAgg_initAgg_0;
+/* 010 */   private boolean hashAgg_bufIsNull_0;
+/* 011 */   private double hashAgg_bufValue_0;
+/* 012 */   private boolean hashAgg_bufIsNull_1;
+/* 013 */   private long hashAgg_bufValue_1;
+/* 014 */   private boolean hashAgg_bufIsNull_2;
+/* 015 */   private double hashAgg_bufValue_2;
+/* 016 */   private boolean hashAgg_bufIsNull_3;
+/* 017 */   private long hashAgg_bufValue_3;
+/* 018 */   private boolean hashAgg_bufIsNull_4;
+/* 019 */   private long hashAgg_bufValue_4;
+/* 020 */   private hashAgg_FastHashMap_0 hashAgg_fastHashMap_0;
+/* 021 */   private org.apache.spark.unsafe.KVIterator<UnsafeRow, UnsafeRow> hashAgg_fastHashMapIter_0;
+/* 022 */   private org.apache.spark.unsafe.KVIterator hashAgg_mapIter_0;
+/* 023 */   private org.apache.spark.sql.execution.UnsafeFixedWidthAggregationMap hashAgg_hashMap_0;
+/* 024 */   private org.apache.spark.sql.execution.UnsafeKVExternalSorter hashAgg_sorter_0;
+/* 025 */   private int columnartorow_batchIdx_0;
+/* 026 */   private boolean hashAgg_hashAgg_isNull_15_0;
+/* 027 */   private boolean hashAgg_hashAgg_isNull_26_0;
+/* 028 */   private org.apache.spark.sql.execution.vectorized.ConstantColumnVector[] columnartorow_mutableStateArray_3 = new org.apache.spark.sql.execution.vectorized.ConstantColumnVector[1];
+/* 029 */   private org.apache.spark.sql.execution.vectorized.OnHeapColumnVector[] columnartorow_mutableStateArray_2 = new org.apache.spark.sql.execution.vectorized.OnHeapColumnVector[3];
+/* 030 */   private org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter[] columnartorow_mutableStateArray_4 = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter[6];
+/* 031 */   private org.apache.spark.sql.vectorized.ColumnarBatch[] columnartorow_mutableStateArray_1 = new org.apache.spark.sql.vectorized.ColumnarBatch[1];
+/* 032 */   private scala.collection.Iterator[] columnartorow_mutableStateArray_0 = new scala.collection.Iterator[1];
+/* 033 */
+/* 034 */   public GeneratedIteratorForCodegenStage1(Object[] references) {
+/* 035 */     this.references = references;
+/* 036 */   }
+/* 037 */
+/* 038 */   public void init(int index, scala.collection.Iterator[] inputs) {
+/* 039 */     partitionIndex = index;
+/* 040 */     this.inputs = inputs;
+/* 041 */
+/* 042 */     columnartorow_mutableStateArray_0[0] = inputs[0];
+/* 043 */     columnartorow_mutableStateArray_4[0] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(4, 64);
+/* 044 */     columnartorow_mutableStateArray_4[1] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(4, 64);
+/* 045 */     columnartorow_mutableStateArray_4[2] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(2, 0);
+/* 046 */     columnartorow_mutableStateArray_4[3] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(2, 0);
+/* 047 */     columnartorow_mutableStateArray_4[4] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(1, 0);
+/* 048 */     columnartorow_mutableStateArray_4[5] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(6, 0);
+/* 049 */
+/* 050 */   }
+/* 051 */
+/* 052 */   public class hashAgg_FastHashMap_0 {
+/* 053 */     private org.apache.spark.sql.catalyst.expressions.RowBasedKeyValueBatch batch;
+/* 054 */     private int[] buckets;
+/* 055 */     private int capacity = 1 << 16;
+/* 056 */     private double loadFactor = 0.5;
+/* 057 */     private int numBuckets = (int) (capacity / loadFactor);
+/* 058 */     private int maxSteps = 2;
+/* 059 */     private int numRows = 0;
+/* 060 */     private Object emptyVBase;
+/* 061 */     private long emptyVOff;
+/* 062 */     private int emptyVLen;
+/* 063 */     private boolean isBatchFull = false;
+/* 064 */     private org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter agg_rowWriter;
+/* 065 */
+/* 066 */     public hashAgg_FastHashMap_0(
+/* 067 */       org.apache.spark.memory.TaskMemoryManager taskMemoryManager,
+/* 068 */       InternalRow emptyAggregationBuffer) {
+/* 069 */       batch = org.apache.spark.sql.catalyst.expressions.RowBasedKeyValueBatch
+/* 070 */       .allocate(((org.apache.spark.sql.types.StructType) references[1] /* keySchemaTerm */), ((org.apache.spark.sql.types.StructType) references[2] /* valueSchemaTerm */), taskMemoryManager, capacity);
+/* 071 */
+/* 072 */       final UnsafeProjection valueProjection = UnsafeProjection.create(((org.apache.spark.sql.types.StructType) references[2] /* valueSchemaTerm */));
+/* 073 */       final byte[] emptyBuffer = valueProjection.apply(emptyAggregationBuffer).getBytes();
+/* 074 */
+/* 075 */       emptyVBase = emptyBuffer;
+/* 076 */       emptyVOff = Platform.BYTE_ARRAY_OFFSET;
+/* 077 */       emptyVLen = emptyBuffer.length;
+/* 078 */
+/* 079 */       agg_rowWriter = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(
+/* 080 */         1, 0);
+/* 081 */
+/* 082 */       buckets = new int[numBuckets];
+/* 083 */       java.util.Arrays.fill(buckets, -1);
+/* 084 */     }
+/* 085 */
+/* 086 */     public org.apache.spark.sql.catalyst.expressions.UnsafeRow findOrInsert(int hashAgg_key_0) {
+/* 087 */       long h = hash(hashAgg_key_0);
+/* 088 */       int step = 0;
+/* 089 */       int idx = (int) h & (numBuckets - 1);
+/* 090 */       while (step < maxSteps) {
+/* 091 */         // Return bucket index if it's either an empty slot or already contains the key
+/* 092 */         if (buckets[idx] == -1) {
+/* 093 */           if (numRows < capacity && !isBatchFull) {
+/* 094 */             agg_rowWriter.reset();
+/* 095 */             agg_rowWriter.zeroOutNullBytes();
+/* 096 */             agg_rowWriter.write(0, hashAgg_key_0);
+/* 097 */             org.apache.spark.sql.catalyst.expressions.UnsafeRow agg_result
+/* 098 */             = agg_rowWriter.getRow();
+/* 099 */             Object kbase = agg_result.getBaseObject();
+/* 100 */             long koff = agg_result.getBaseOffset();
+/* 101 */             int klen = agg_result.getSizeInBytes();
+/* 102 */
+/* 103 */             UnsafeRow vRow
+/* 104 */             = batch.appendRow(kbase, koff, klen, emptyVBase, emptyVOff, emptyVLen);
+/* 105 */             if (vRow == null) {
+/* 106 */               isBatchFull = true;
+/* 107 */             } else {
+/* 108 */               buckets[idx] = numRows++;
+/* 109 */             }
+/* 110 */             return vRow;
+/* 111 */           } else {
+/* 112 */             // No more space
+/* 113 */             return null;
+/* 114 */           }
+/* 115 */         } else if (equals(idx, hashAgg_key_0)) {
+/* 116 */           return batch.getValueRow(buckets[idx]);
+/* 117 */         }
+/* 118 */         idx = (idx + 1) & (numBuckets - 1);
+/* 119 */         step++;
+/* 120 */       }
+/* 121 */       // Didn't find it
+/* 122 */       return null;
+/* 123 */     }
+/* 124 */
+/* 125 */     private boolean equals(int idx, int hashAgg_key_0) {
+/* 126 */       UnsafeRow row = batch.getKeyRow(buckets[idx]);
+/* 127 */       return (row.getInt(0) == hashAgg_key_0);
+/* 128 */     }
+/* 129 */
+/* 130 */     private long hash(int hashAgg_key_0) {
+/* 131 */       long hashAgg_hash_0 = 0;
+/* 132 */
+/* 133 */       int hashAgg_result_0 = hashAgg_key_0;
+/* 134 */       hashAgg_hash_0 = (hashAgg_hash_0 ^ (0x9e3779b9)) + hashAgg_result_0 + (hashAgg_hash_0 << 6) + (hashAgg_hash_0 >>> 2);
+/* 135 */
+/* 136 */       return hashAgg_hash_0;
+/* 137 */     }
+/* 138 */
+/* 139 */     public org.apache.spark.unsafe.KVIterator<UnsafeRow, UnsafeRow> rowIterator() {
+/* 140 */       return batch.rowIterator();
+/* 141 */     }
+/* 142 */
+/* 143 */     public void close() {
+/* 144 */       batch.close();
+/* 145 */     }
+/* 146 */
+/* 147 */   }
+/* 148 */
+/* 149 */   private void hashAgg_doAggregateWithKeys_0() throws java.io.IOException {
+/* 150 */     if (columnartorow_mutableStateArray_1[0] == null) {
+/* 151 */       columnartorow_nextBatch_0();
+/* 152 */     }
+/* 153 */     while ( columnartorow_mutableStateArray_1[0] != null) {
+/* 154 */       int columnartorow_numRows_0 = columnartorow_mutableStateArray_1[0].numRows();
+/* 155 */       int columnartorow_localEnd_0 = columnartorow_numRows_0 - columnartorow_batchIdx_0;
+/* 156 */       for (int columnartorow_localIdx_0 = 0; columnartorow_localIdx_0 < columnartorow_localEnd_0; columnartorow_localIdx_0++) {
+/* 157 */         int columnartorow_rowIdx_0 = columnartorow_batchIdx_0 + columnartorow_localIdx_0;
+/* 158 */         do {
+/* 159 */           boolean columnartorow_isNull_2 = columnartorow_mutableStateArray_2[2].isNullAt(columnartorow_rowIdx_0);
+/* 160 */           UTF8String columnartorow_value_2 = columnartorow_isNull_2 ? null : (columnartorow_mutableStateArray_2[2].getUTF8String(columnartorow_rowIdx_0));
+/* 161 */
+/* 162 */           boolean filter_value_2 = !columnartorow_isNull_2;
+/* 163 */           if (!filter_value_2) continue;
+/* 164 */
+/* 165 */           boolean filter_value_3 = false;
+/* 166 */           filter_value_3 = columnartorow_value_2.equals(((UTF8String) references[10] /* literal */));
+/* 167 */           if (!filter_value_3) continue;
+/* 168 */           boolean columnartorow_isNull_0 = columnartorow_mutableStateArray_2[0].isNullAt(columnartorow_rowIdx_0);
+/* 169 */           long columnartorow_value_0 = columnartorow_isNull_0 ? -1L : (columnartorow_mutableStateArray_2[0].getLong(columnartorow_rowIdx_0));
+/* 170 */
+/* 171 */           boolean filter_value_8 = !columnartorow_isNull_0;
+/* 172 */           if (!filter_value_8) continue;
+/* 173 */
+/* 174 */           boolean filter_isNull_9 = columnartorow_isNull_0;
+/* 175 */           int filter_value_11 = -1;
+/* 176 */           if (!columnartorow_isNull_0) {
+/* 177 */             filter_value_11 =
+/* 178 */             org.apache.spark.sql.catalyst.util.DateTimeUtils.microsToDays(columnartorow_value_0, ((java.time.ZoneId) references[11] /* zoneId */));
+/* 179 */           }
+/* 180 */           int filter_value_10 = -1;
+/* 181 */           filter_value_10 = org.apache.spark.sql.catalyst.util.DateTimeUtils.getDayOfWeek(filter_value_11);
+/* 182 */
+/* 183 */           boolean filter_value_9 = false;
+/* 184 */           filter_value_9 = filter_value_10 >= 2;
+/* 185 */           if (!filter_value_9) continue;
+/* 186 */           boolean filter_value_16 = !columnartorow_isNull_0;
+/* 187 */           if (!filter_value_16) continue;
+/* 188 */
+/* 189 */           boolean filter_isNull_16 = columnartorow_isNull_0;
+/* 190 */           int filter_value_19 = -1;
+/* 191 */           if (!columnartorow_isNull_0) {
+/* 192 */             filter_value_19 =
+/* 193 */             org.apache.spark.sql.catalyst.util.DateTimeUtils.microsToDays(columnartorow_value_0, ((java.time.ZoneId) references[12] /* zoneId */));
+/* 194 */           }
+/* 195 */           int filter_value_18 = -1;
+/* 196 */           filter_value_18 = org.apache.spark.sql.catalyst.util.DateTimeUtils.getDayOfWeek(filter_value_19);
+/* 197 */
+/* 198 */           boolean filter_value_17 = false;
+/* 199 */           filter_value_17 = filter_value_18 <= 6;
+/* 200 */           if (!filter_value_17) continue;
+/* 201 */
+/* 202 */           ((org.apache.spark.sql.execution.metric.SQLMetric) references[9] /* numOutputRows */).add(1);
+/* 203 */
+/* 204 */           // common sub-expressions
+/* 205 */
+/* 206 */           boolean columnartorow_isNull_1 = columnartorow_mutableStateArray_2[1].isNullAt(columnartorow_rowIdx_0);
+/* 207 */           float columnartorow_value_1 = columnartorow_isNull_1 ? -1.0f : (columnartorow_mutableStateArray_2[1].getFloat(columnartorow_rowIdx_0));
+/* 208 */           int project_value_1 = -1;
+/* 209 */           project_value_1 = org.apache.spark.sql.catalyst.util.DateTimeUtils.getHours(columnartorow_value_0, ((java.time.ZoneId) references[13] /* zoneId */));
+/* 210 */
+/* 211 */           hashAgg_doConsume_0(columnartorow_value_1, columnartorow_isNull_1, project_value_1, false);
+/* 212 */
+/* 213 */         } while(false);
+/* 214 */         // shouldStop check is eliminated
+/* 215 */       }
+/* 216 */       columnartorow_batchIdx_0 = columnartorow_numRows_0;
+/* 217 */       columnartorow_mutableStateArray_1[0].closeIfFreeable();
+/* 218 */       columnartorow_mutableStateArray_1[0] = null;
+/* 219 */       columnartorow_nextBatch_0();
+/* 220 */     }
+/* 221 */     // clean up resources
+/* 222 */     if (columnartorow_mutableStateArray_1[0] != null) {
+/* 223 */       columnartorow_mutableStateArray_1[0].close();
+/* 224 */     }
+/* 225 */
+/* 226 */     hashAgg_fastHashMapIter_0 = hashAgg_fastHashMap_0.rowIterator();
+/* 227 */     hashAgg_mapIter_0 = ((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).finishAggregate(hashAgg_hashMap_0, hashAgg_sorter_0, ((org.apache.spark.sql.execution.metric.SQLMetric) references[3] /* peakMemory */), ((org.apache.spark.sql.execution.metric.SQLMetric) references[4] /* spillSize */), ((org.apache.spark.sql.execution.metric.SQLMetric) references[5] /* avgHashProbe */), ((org.apache.spark.sql.execution.metric.SQLMetric) references[6] /* numTasksFallBacked */));
+/* 228 */
+/* 229 */   }
+/* 230 */
+/* 231 */   private void hashAgg_doAggregate_avg_0(org.apache.spark.sql.catalyst.InternalRow hashAgg_unsafeRowAggBuffer_0, int hashAgg_value_14, boolean hashAgg_isNull_9) throws java.io.IOException {
+/* 232 */     boolean hashAgg_isNull_13 = true;
+/* 233 */     double hashAgg_value_18 = -1.0;
+/* 234 */     boolean hashAgg_isNull_14 = hashAgg_unsafeRowAggBuffer_0.isNullAt(0);
+/* 235 */     double hashAgg_value_19 = hashAgg_isNull_14 ?
+/* 236 */     -1.0 : (hashAgg_unsafeRowAggBuffer_0.getDouble(0));
+/* 237 */     if (!hashAgg_isNull_14) {
+/* 238 */       hashAgg_hashAgg_isNull_15_0 = true;
+/* 239 */       double hashAgg_value_20 = -1.0;
+/* 240 */       do {
+/* 241 */         boolean hashAgg_isNull_16 = hashAgg_isNull_9;
+/* 242 */         double hashAgg_value_21 = -1.0;
+/* 243 */         if (!hashAgg_isNull_9) {
+/* 244 */           hashAgg_value_21 = (double) hashAgg_value_14;
+/* 245 */         }
+/* 246 */         if (!hashAgg_isNull_16) {
+/* 247 */           hashAgg_hashAgg_isNull_15_0 = false;
+/* 248 */           hashAgg_value_20 = hashAgg_value_21;
+/* 249 */           continue;
+/* 250 */         }
+/* 251 */
+/* 252 */         if (!false) {
+/* 253 */           hashAgg_hashAgg_isNull_15_0 = false;
+/* 254 */           hashAgg_value_20 = 0.0D;
+/* 255 */           continue;
+/* 256 */         }
+/* 257 */
+/* 258 */       } while (false);
+/* 259 */
+/* 260 */       hashAgg_isNull_13 = false; // resultCode could change nullability.
+/* 261 */
+/* 262 */       hashAgg_value_18 = hashAgg_value_19 + hashAgg_value_20;
+/* 263 */
+/* 264 */     }
+/* 265 */     boolean hashAgg_isNull_18 = false;
+/* 266 */     long hashAgg_value_23 = -1L;
+/* 267 */     if (!false && hashAgg_isNull_9) {
+/* 268 */       boolean hashAgg_isNull_20 = hashAgg_unsafeRowAggBuffer_0.isNullAt(1);
+/* 269 */       long hashAgg_value_25 = hashAgg_isNull_20 ?
+/* 270 */       -1L : (hashAgg_unsafeRowAggBuffer_0.getLong(1));
+/* 271 */       hashAgg_isNull_18 = hashAgg_isNull_20;
+/* 272 */       hashAgg_value_23 = hashAgg_value_25;
+/* 273 */     } else {
+/* 274 */       boolean hashAgg_isNull_21 = true;
+/* 275 */       long hashAgg_value_26 = -1L;
+/* 276 */       boolean hashAgg_isNull_22 = hashAgg_unsafeRowAggBuffer_0.isNullAt(1);
+/* 277 */       long hashAgg_value_27 = hashAgg_isNull_22 ?
+/* 278 */       -1L : (hashAgg_unsafeRowAggBuffer_0.getLong(1));
+/* 279 */       if (!hashAgg_isNull_22) {
+/* 280 */         hashAgg_isNull_21 = false; // resultCode could change nullability.
+/* 281 */
+/* 282 */         hashAgg_value_26 = hashAgg_value_27 + 1L;
+/* 283 */
+/* 284 */       }
+/* 285 */       hashAgg_isNull_18 = hashAgg_isNull_21;
+/* 286 */       hashAgg_value_23 = hashAgg_value_26;
+/* 287 */     }
+/* 288 */
+/* 289 */     if (!hashAgg_isNull_13) {
+/* 290 */       hashAgg_unsafeRowAggBuffer_0.setDouble(0, hashAgg_value_18);
+/* 291 */     } else {
+/* 292 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(0);
+/* 293 */     }
+/* 294 */
+/* 295 */     if (!hashAgg_isNull_18) {
+/* 296 */       hashAgg_unsafeRowAggBuffer_0.setLong(1, hashAgg_value_23);
+/* 297 */     } else {
+/* 298 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(1);
+/* 299 */     }
+/* 300 */   }
+/* 301 */
+/* 302 */   private void hashAgg_doConsume_0(float hashAgg_expr_0_0, boolean hashAgg_exprIsNull_0_0, int hashAgg_expr_1_0, boolean hashAgg_exprIsNull_1_0) throws java.io.IOException {
+/* 303 */     UnsafeRow hashAgg_unsafeRowAggBuffer_0 = null;
+/* 304 */     UnsafeRow hashAgg_fastAggBuffer_0 = null;
+/* 305 */
+/* 306 */     if (!hashAgg_exprIsNull_1_0) {
+/* 307 */       hashAgg_fastAggBuffer_0 = hashAgg_fastHashMap_0.findOrInsert(
+/* 308 */         hashAgg_expr_1_0);
+/* 309 */     }
+/* 310 */     // Cannot find the key in fast hash map, try regular hash map.
+/* 311 */     if (hashAgg_fastAggBuffer_0 == null) {
+/* 312 */       // generate grouping key
+/* 313 */       columnartorow_mutableStateArray_4[4].reset();
+/* 314 */
+/* 315 */       columnartorow_mutableStateArray_4[4].zeroOutNullBytes();
+/* 316 */
+/* 317 */       if (hashAgg_exprIsNull_1_0) {
+/* 318 */         columnartorow_mutableStateArray_4[4].setNullAt(0);
+/* 319 */       } else {
+/* 320 */         columnartorow_mutableStateArray_4[4].write(0, hashAgg_expr_1_0);
+/* 321 */       }
+/* 322 */       int hashAgg_unsafeRowKeyHash_0 = (columnartorow_mutableStateArray_4[4].getRow()).hashCode();
+/* 323 */       if (true) {
+/* 324 */         // try to get the buffer from hash map
+/* 325 */         hashAgg_unsafeRowAggBuffer_0 =
+/* 326 */         hashAgg_hashMap_0.getAggregationBufferFromUnsafeRow((columnartorow_mutableStateArray_4[4].getRow()), hashAgg_unsafeRowKeyHash_0);
+/* 327 */       }
+/* 328 */       // Can't allocate buffer from the hash map. Spill the map and fallback to sort-based
+/* 329 */       // aggregation after processing all input rows.
+/* 330 */       if (hashAgg_unsafeRowAggBuffer_0 == null) {
+/* 331 */         if (hashAgg_sorter_0 == null) {
+/* 332 */           hashAgg_sorter_0 = hashAgg_hashMap_0.destructAndCreateExternalSorter();
+/* 333 */         } else {
+/* 334 */           hashAgg_sorter_0.merge(hashAgg_hashMap_0.destructAndCreateExternalSorter());
+/* 335 */         }
+/* 336 */
+/* 337 */         // the hash map had be spilled, it should have enough memory now,
+/* 338 */         // try to allocate buffer again.
+/* 339 */         hashAgg_unsafeRowAggBuffer_0 = hashAgg_hashMap_0.getAggregationBufferFromUnsafeRow(
+/* 340 */           (columnartorow_mutableStateArray_4[4].getRow()), hashAgg_unsafeRowKeyHash_0);
+/* 341 */         if (hashAgg_unsafeRowAggBuffer_0 == null) {
+/* 342 */           // failed to allocate the first page
+/* 343 */           throw new org.apache.spark.memory.SparkOutOfMemoryError("No enough memory for aggregation");
+/* 344 */         }
+/* 345 */       }
+/* 346 */
+/* 347 */     }
+/* 348 */
+/* 349 */     // Updates the proper row buffer
+/* 350 */     if (hashAgg_fastAggBuffer_0 != null) {
+/* 351 */       hashAgg_unsafeRowAggBuffer_0 = hashAgg_fastAggBuffer_0;
+/* 352 */     }
+/* 353 */
+/* 354 */     // common sub-expressions
+/* 355 */
+/* 356 */     boolean hashAgg_isNull_10 = true;
+/* 357 */     boolean hashAgg_value_15 = false;
+/* 358 */
+/* 359 */     if (!hashAgg_exprIsNull_0_0) {
+/* 360 */       hashAgg_isNull_10 = false; // resultCode could change nullability.
+/* 361 */       hashAgg_value_15 = org.apache.spark.sql.catalyst.util.SQLOrderingUtil.compareFloats(hashAgg_expr_0_0, 35.0F) < 0;
+/* 362 */
+/* 363 */     }
+/* 364 */     boolean hashAgg_isNull_9 = hashAgg_isNull_10;
+/* 365 */     int hashAgg_value_14 = -1;
+/* 366 */     if (!hashAgg_isNull_10) {
+/* 367 */       hashAgg_value_14 = hashAgg_value_15 ? 1 : 0;
+/* 368 */     }
+/* 369 */
+/* 370 */     // evaluate aggregate functions and update aggregation buffers
+/* 371 */     hashAgg_doAggregate_avg_0(hashAgg_unsafeRowAggBuffer_0, hashAgg_value_14, hashAgg_isNull_9);
+/* 372 */     hashAgg_doAggregate_avg_1(hashAgg_expr_0_0, hashAgg_unsafeRowAggBuffer_0, hashAgg_exprIsNull_0_0);
+/* 373 */     hashAgg_doAggregate_count_0(hashAgg_unsafeRowAggBuffer_0);
+/* 374 */
+/* 375 */   }
+/* 376 */
+/* 377 */   private void hashAgg_doAggregate_count_0(org.apache.spark.sql.catalyst.InternalRow hashAgg_unsafeRowAggBuffer_0) throws java.io.IOException {
+/* 378 */     long hashAgg_value_43 = hashAgg_unsafeRowAggBuffer_0.getLong(4);
+/* 379 */
+/* 380 */     long hashAgg_value_42 = -1L;
+/* 381 */
+/* 382 */     hashAgg_value_42 = hashAgg_value_43 + 1L;
+/* 383 */
+/* 384 */     hashAgg_unsafeRowAggBuffer_0.setLong(4, hashAgg_value_42);
+/* 385 */   }
+/* 386 */
+/* 387 */   private void columnartorow_nextBatch_0() throws java.io.IOException {
+/* 388 */     if (columnartorow_mutableStateArray_0[0].hasNext()) {
+/* 389 */       columnartorow_mutableStateArray_1[0] = (org.apache.spark.sql.vectorized.ColumnarBatch)columnartorow_mutableStateArray_0[0].next();
+/* 390 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[8] /* numInputBatches */).add(1);
+/* 391 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[7] /* numOutputRows */).add(columnartorow_mutableStateArray_1[0].numRows());
+/* 392 */       columnartorow_batchIdx_0 = 0;
+/* 393 */       columnartorow_mutableStateArray_2[0] = (org.apache.spark.sql.execution.vectorized.OnHeapColumnVector) columnartorow_mutableStateArray_1[0].column(0);
+/* 394 */       columnartorow_mutableStateArray_2[1] = (org.apache.spark.sql.execution.vectorized.OnHeapColumnVector) columnartorow_mutableStateArray_1[0].column(1);
+/* 395 */       columnartorow_mutableStateArray_2[2] = (org.apache.spark.sql.execution.vectorized.OnHeapColumnVector) columnartorow_mutableStateArray_1[0].column(2);
+/* 396 */       columnartorow_mutableStateArray_3[0] = (org.apache.spark.sql.execution.vectorized.ConstantColumnVector) columnartorow_mutableStateArray_1[0].column(3);
+/* 397 */
+/* 398 */     }
+/* 399 */   }
+/* 400 */
+/* 401 */   private void hashAgg_doAggregateWithKeysOutput_0(UnsafeRow hashAgg_keyTerm_0, UnsafeRow hashAgg_bufferTerm_0)
+/* 402 */   throws java.io.IOException {
+/* 403 */     ((org.apache.spark.sql.execution.metric.SQLMetric) references[14] /* numOutputRows */).add(1);
+/* 404 */
+/* 405 */     boolean hashAgg_isNull_40 = hashAgg_keyTerm_0.isNullAt(0);
+/* 406 */     int hashAgg_value_45 = hashAgg_isNull_40 ?
+/* 407 */     -1 : (hashAgg_keyTerm_0.getInt(0));
+/* 408 */     boolean hashAgg_isNull_41 = hashAgg_bufferTerm_0.isNullAt(0);
+/* 409 */     double hashAgg_value_46 = hashAgg_isNull_41 ?
+/* 410 */     -1.0 : (hashAgg_bufferTerm_0.getDouble(0));
+/* 411 */     boolean hashAgg_isNull_42 = hashAgg_bufferTerm_0.isNullAt(1);
+/* 412 */     long hashAgg_value_47 = hashAgg_isNull_42 ?
+/* 413 */     -1L : (hashAgg_bufferTerm_0.getLong(1));
+/* 414 */     boolean hashAgg_isNull_43 = hashAgg_bufferTerm_0.isNullAt(2);
+/* 415 */     double hashAgg_value_48 = hashAgg_isNull_43 ?
+/* 416 */     -1.0 : (hashAgg_bufferTerm_0.getDouble(2));
+/* 417 */     boolean hashAgg_isNull_44 = hashAgg_bufferTerm_0.isNullAt(3);
+/* 418 */     long hashAgg_value_49 = hashAgg_isNull_44 ?
+/* 419 */     -1L : (hashAgg_bufferTerm_0.getLong(3));
+/* 420 */     long hashAgg_value_50 = hashAgg_bufferTerm_0.getLong(4);
+/* 421 */
+/* 422 */     columnartorow_mutableStateArray_4[5].reset();
+/* 423 */
+/* 424 */     columnartorow_mutableStateArray_4[5].zeroOutNullBytes();
+/* 425 */
+/* 426 */     if (hashAgg_isNull_40) {
+/* 427 */       columnartorow_mutableStateArray_4[5].setNullAt(0);
+/* 428 */     } else {
+/* 429 */       columnartorow_mutableStateArray_4[5].write(0, hashAgg_value_45);
+/* 430 */     }
+/* 431 */
+/* 432 */     if (hashAgg_isNull_41) {
+/* 433 */       columnartorow_mutableStateArray_4[5].setNullAt(1);
+/* 434 */     } else {
+/* 435 */       columnartorow_mutableStateArray_4[5].write(1, hashAgg_value_46);
+/* 436 */     }
+/* 437 */
+/* 438 */     if (hashAgg_isNull_42) {
+/* 439 */       columnartorow_mutableStateArray_4[5].setNullAt(2);
+/* 440 */     } else {
+/* 441 */       columnartorow_mutableStateArray_4[5].write(2, hashAgg_value_47);
+/* 442 */     }
+/* 443 */
+/* 444 */     if (hashAgg_isNull_43) {
+/* 445 */       columnartorow_mutableStateArray_4[5].setNullAt(3);
+/* 446 */     } else {
+/* 447 */       columnartorow_mutableStateArray_4[5].write(3, hashAgg_value_48);
+/* 448 */     }
+/* 449 */
+/* 450 */     if (hashAgg_isNull_44) {
+/* 451 */       columnartorow_mutableStateArray_4[5].setNullAt(4);
+/* 452 */     } else {
+/* 453 */       columnartorow_mutableStateArray_4[5].write(4, hashAgg_value_49);
+/* 454 */     }
+/* 455 */
+/* 456 */     columnartorow_mutableStateArray_4[5].write(5, hashAgg_value_50);
+/* 457 */     append((columnartorow_mutableStateArray_4[5].getRow()));
+/* 458 */
+/* 459 */   }
+/* 460 */
+/* 461 */   protected void processNext() throws java.io.IOException {
+/* 462 */     if (!hashAgg_initAgg_0) {
+/* 463 */       hashAgg_initAgg_0 = true;
+/* 464 */       hashAgg_fastHashMap_0 = new hashAgg_FastHashMap_0(((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).getTaskContext().taskMemoryManager(), ((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).getEmptyAggregationBuffer());
+/* 465 */
+/* 466 */       ((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).getTaskContext().addTaskCompletionListener(
+/* 467 */         new org.apache.spark.util.TaskCompletionListener() {
+/* 468 */           @Override
+/* 469 */           public void onTaskCompletion(org.apache.spark.TaskContext context) {
+/* 470 */             hashAgg_fastHashMap_0.close();
+/* 471 */           }
+/* 472 */         });
+/* 473 */
+/* 474 */       hashAgg_hashMap_0 = ((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).createHashMap();
+/* 475 */       long wholestagecodegen_beforeAgg_0 = System.nanoTime();
+/* 476 */       hashAgg_doAggregateWithKeys_0();
+/* 477 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[15] /* aggTime */).add((System.nanoTime() - wholestagecodegen_beforeAgg_0) / 1000000);
+/* 478 */     }
+/* 479 */     // output the result
+/* 480 */
+/* 481 */     while ( hashAgg_fastHashMapIter_0.next()) {
+/* 482 */       UnsafeRow hashAgg_aggKey_0 = (UnsafeRow) hashAgg_fastHashMapIter_0.getKey();
+/* 483 */       UnsafeRow hashAgg_aggBuffer_0 = (UnsafeRow) hashAgg_fastHashMapIter_0.getValue();
+/* 484 */       hashAgg_doAggregateWithKeysOutput_0(hashAgg_aggKey_0, hashAgg_aggBuffer_0);
+/* 485 */
+/* 486 */       if (shouldStop()) return;
+/* 487 */     }
+/* 488 */     hashAgg_fastHashMap_0.close();
+/* 489 */
+/* 490 */     while ( hashAgg_mapIter_0.next()) {
+/* 491 */       UnsafeRow hashAgg_aggKey_0 = (UnsafeRow) hashAgg_mapIter_0.getKey();
+/* 492 */       UnsafeRow hashAgg_aggBuffer_0 = (UnsafeRow) hashAgg_mapIter_0.getValue();
+/* 493 */       hashAgg_doAggregateWithKeysOutput_0(hashAgg_aggKey_0, hashAgg_aggBuffer_0);
+/* 494 */       if (shouldStop()) return;
+/* 495 */     }
+/* 496 */     hashAgg_mapIter_0.close();
+/* 497 */     if (hashAgg_sorter_0 == null) {
+/* 498 */       hashAgg_hashMap_0.free();
+/* 499 */     }
+/* 500 */   }
+/* 501 */
+/* 502 */   private void hashAgg_doAggregate_avg_1(float hashAgg_expr_0_0, org.apache.spark.sql.catalyst.InternalRow hashAgg_unsafeRowAggBuffer_0, boolean hashAgg_exprIsNull_0_0) throws java.io.IOException {
+/* 503 */     boolean hashAgg_isNull_24 = true;
+/* 504 */     double hashAgg_value_29 = -1.0;
+/* 505 */     boolean hashAgg_isNull_25 = hashAgg_unsafeRowAggBuffer_0.isNullAt(2);
+/* 506 */     double hashAgg_value_30 = hashAgg_isNull_25 ?
+/* 507 */     -1.0 : (hashAgg_unsafeRowAggBuffer_0.getDouble(2));
+/* 508 */     if (!hashAgg_isNull_25) {
+/* 509 */       hashAgg_hashAgg_isNull_26_0 = true;
+/* 510 */       double hashAgg_value_31 = -1.0;
+/* 511 */       do {
+/* 512 */         boolean hashAgg_isNull_27 = hashAgg_exprIsNull_0_0;
+/* 513 */         double hashAgg_value_32 = -1.0;
+/* 514 */         if (!hashAgg_exprIsNull_0_0) {
+/* 515 */           hashAgg_value_32 = (double) hashAgg_expr_0_0;
+/* 516 */         }
+/* 517 */         if (!hashAgg_isNull_27) {
+/* 518 */           hashAgg_hashAgg_isNull_26_0 = false;
+/* 519 */           hashAgg_value_31 = hashAgg_value_32;
+/* 520 */           continue;
+/* 521 */         }
+/* 522 */
+/* 523 */         if (!false) {
+/* 524 */           hashAgg_hashAgg_isNull_26_0 = false;
+/* 525 */           hashAgg_value_31 = 0.0D;
+/* 526 */           continue;
+/* 527 */         }
+/* 528 */
+/* 529 */       } while (false);
+/* 530 */
+/* 531 */       hashAgg_isNull_24 = false; // resultCode could change nullability.
+/* 532 */
+/* 533 */       hashAgg_value_29 = hashAgg_value_30 + hashAgg_value_31;
+/* 534 */
+/* 535 */     }
+/* 536 */     boolean hashAgg_isNull_30 = false;
+/* 537 */     long hashAgg_value_35 = -1L;
+/* 538 */     if (!false && hashAgg_exprIsNull_0_0) {
+/* 539 */       boolean hashAgg_isNull_33 = hashAgg_unsafeRowAggBuffer_0.isNullAt(3);
+/* 540 */       long hashAgg_value_38 = hashAgg_isNull_33 ?
+/* 541 */       -1L : (hashAgg_unsafeRowAggBuffer_0.getLong(3));
+/* 542 */       hashAgg_isNull_30 = hashAgg_isNull_33;
+/* 543 */       hashAgg_value_35 = hashAgg_value_38;
+/* 544 */     } else {
+/* 545 */       boolean hashAgg_isNull_34 = true;
+/* 546 */       long hashAgg_value_39 = -1L;
+/* 547 */       boolean hashAgg_isNull_35 = hashAgg_unsafeRowAggBuffer_0.isNullAt(3);
+/* 548 */       long hashAgg_value_40 = hashAgg_isNull_35 ?
+/* 549 */       -1L : (hashAgg_unsafeRowAggBuffer_0.getLong(3));
+/* 550 */       if (!hashAgg_isNull_35) {
+/* 551 */         hashAgg_isNull_34 = false; // resultCode could change nullability.
+/* 552 */
+/* 553 */         hashAgg_value_39 = hashAgg_value_40 + 1L;
+/* 554 */
+/* 555 */       }
+/* 556 */       hashAgg_isNull_30 = hashAgg_isNull_34;
+/* 557 */       hashAgg_value_35 = hashAgg_value_39;
+/* 558 */     }
+/* 559 */
+/* 560 */     if (!hashAgg_isNull_24) {
+/* 561 */       hashAgg_unsafeRowAggBuffer_0.setDouble(2, hashAgg_value_29);
+/* 562 */     } else {
+/* 563 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(2);
+/* 564 */     }
+/* 565 */
+/* 566 */     if (!hashAgg_isNull_30) {
+/* 567 */       hashAgg_unsafeRowAggBuffer_0.setLong(3, hashAgg_value_35);
+/* 568 */     } else {
+/* 569 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(3);
+/* 570 */     }
+/* 571 */   }
+/* 572 */
+/* 573 */ }
+
+== Subtree 2 / 3 (maxMethodCodeSize:531; maxConstantPoolSize:271(0.41% used); numInnerClasses:0) ==
+*(2) HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)], output=[hour#874, congested_pct#885, avg_speed#887, readings#889L])
++- AQEShuffleRead coalesced
+   +- ShuffleQueryStage 0
+      +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3830]
+         +- *(1) HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
+            +- *(1) Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+               +- *(1) Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                  +- *(1) ColumnarToRow
+                     +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+Generated code:
+/* 001 */ public Object generate(Object[] references) {
+/* 002 */   return new GeneratedIteratorForCodegenStage2(references);
+/* 003 */ }
+/* 004 */
+/* 005 */ // codegenStageId=2
+/* 006 */ final class GeneratedIteratorForCodegenStage2 extends org.apache.spark.sql.execution.BufferedRowIterator {
+/* 007 */   private Object[] references;
+/* 008 */   private scala.collection.Iterator[] inputs;
+/* 009 */   private boolean hashAgg_initAgg_0;
+/* 010 */   private org.apache.spark.unsafe.KVIterator hashAgg_mapIter_0;
+/* 011 */   private org.apache.spark.sql.execution.UnsafeFixedWidthAggregationMap hashAgg_hashMap_0;
+/* 012 */   private org.apache.spark.sql.execution.UnsafeKVExternalSorter hashAgg_sorter_0;
+/* 013 */   private scala.collection.Iterator inputadapter_input_0;
+/* 014 */   private org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter[] hashAgg_mutableStateArray_0 = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter[2];
+/* 015 */
+/* 016 */   public GeneratedIteratorForCodegenStage2(Object[] references) {
+/* 017 */     this.references = references;
+/* 018 */   }
+/* 019 */
+/* 020 */   public void init(int index, scala.collection.Iterator[] inputs) {
+/* 021 */     partitionIndex = index;
+/* 022 */     this.inputs = inputs;
+/* 023 */
+/* 024 */     inputadapter_input_0 = inputs[0];
+/* 025 */     hashAgg_mutableStateArray_0[0] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(1, 0);
+/* 026 */     hashAgg_mutableStateArray_0[1] = new org.apache.spark.sql.catalyst.expressions.codegen.UnsafeRowWriter(4, 0);
+/* 027 */
+/* 028 */   }
+/* 029 */
+/* 030 */   private void hashAgg_doAggregateWithKeys_0() throws java.io.IOException {
+/* 031 */     while ( inputadapter_input_0.hasNext()) {
+/* 032 */       InternalRow inputadapter_row_0 = (InternalRow) inputadapter_input_0.next();
+/* 033 */
+/* 034 */       boolean inputadapter_isNull_0 = inputadapter_row_0.isNullAt(0);
+/* 035 */       int inputadapter_value_0 = inputadapter_isNull_0 ?
+/* 036 */       -1 : (inputadapter_row_0.getInt(0));
+/* 037 */       boolean inputadapter_isNull_1 = inputadapter_row_0.isNullAt(1);
+/* 038 */       double inputadapter_value_1 = inputadapter_isNull_1 ?
+/* 039 */       -1.0 : (inputadapter_row_0.getDouble(1));
+/* 040 */       boolean inputadapter_isNull_2 = inputadapter_row_0.isNullAt(2);
+/* 041 */       long inputadapter_value_2 = inputadapter_isNull_2 ?
+/* 042 */       -1L : (inputadapter_row_0.getLong(2));
+/* 043 */       boolean inputadapter_isNull_3 = inputadapter_row_0.isNullAt(3);
+/* 044 */       double inputadapter_value_3 = inputadapter_isNull_3 ?
+/* 045 */       -1.0 : (inputadapter_row_0.getDouble(3));
+/* 046 */       boolean inputadapter_isNull_4 = inputadapter_row_0.isNullAt(4);
+/* 047 */       long inputadapter_value_4 = inputadapter_isNull_4 ?
+/* 048 */       -1L : (inputadapter_row_0.getLong(4));
+/* 049 */       long inputadapter_value_5 = inputadapter_row_0.getLong(5);
+/* 050 */
+/* 051 */       hashAgg_doConsume_0(inputadapter_row_0, inputadapter_value_0, inputadapter_isNull_0, inputadapter_value_1, inputadapter_isNull_1, inputadapter_value_2, inputadapter_isNull_2, inputadapter_value_3, inputadapter_isNull_3, inputadapter_value_4, inputadapter_isNull_4, inputadapter_value_5);
+/* 052 */       // shouldStop check is eliminated
+/* 053 */     }
+/* 054 */
+/* 055 */     hashAgg_mapIter_0 = ((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).finishAggregate(hashAgg_hashMap_0, hashAgg_sorter_0, ((org.apache.spark.sql.execution.metric.SQLMetric) references[1] /* peakMemory */), ((org.apache.spark.sql.execution.metric.SQLMetric) references[2] /* spillSize */), ((org.apache.spark.sql.execution.metric.SQLMetric) references[3] /* avgHashProbe */), ((org.apache.spark.sql.execution.metric.SQLMetric) references[4] /* numTasksFallBacked */));
+/* 056 */   }
+/* 057 */
+/* 058 */   private void hashAgg_doAggregate_avg_0(long hashAgg_expr_2_0, boolean hashAgg_exprIsNull_1_0, boolean hashAgg_exprIsNull_2_0, org.apache.spark.sql.catalyst.InternalRow hashAgg_unsafeRowAggBuffer_0, double hashAgg_expr_1_0) throws java.io.IOException {
+/* 059 */     boolean hashAgg_isNull_2 = true;
+/* 060 */     double hashAgg_value_2 = -1.0;
+/* 061 */     boolean hashAgg_isNull_3 = hashAgg_unsafeRowAggBuffer_0.isNullAt(0);
+/* 062 */     double hashAgg_value_3 = hashAgg_isNull_3 ?
+/* 063 */     -1.0 : (hashAgg_unsafeRowAggBuffer_0.getDouble(0));
+/* 064 */     if (!hashAgg_isNull_3) {
+/* 065 */       if (!hashAgg_exprIsNull_1_0) {
+/* 066 */         hashAgg_isNull_2 = false; // resultCode could change nullability.
+/* 067 */
+/* 068 */         hashAgg_value_2 = hashAgg_value_3 + hashAgg_expr_1_0;
+/* 069 */
+/* 070 */       }
+/* 071 */
+/* 072 */     }
+/* 073 */     boolean hashAgg_isNull_5 = true;
+/* 074 */     long hashAgg_value_5 = -1L;
+/* 075 */     boolean hashAgg_isNull_6 = hashAgg_unsafeRowAggBuffer_0.isNullAt(1);
+/* 076 */     long hashAgg_value_6 = hashAgg_isNull_6 ?
+/* 077 */     -1L : (hashAgg_unsafeRowAggBuffer_0.getLong(1));
+/* 078 */     if (!hashAgg_isNull_6) {
+/* 079 */       if (!hashAgg_exprIsNull_2_0) {
+/* 080 */         hashAgg_isNull_5 = false; // resultCode could change nullability.
+/* 081 */
+/* 082 */         hashAgg_value_5 = hashAgg_value_6 + hashAgg_expr_2_0;
+/* 083 */
+/* 084 */       }
+/* 085 */
+/* 086 */     }
+/* 087 */
+/* 088 */     if (!hashAgg_isNull_2) {
+/* 089 */       hashAgg_unsafeRowAggBuffer_0.setDouble(0, hashAgg_value_2);
+/* 090 */     } else {
+/* 091 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(0);
+/* 092 */     }
+/* 093 */
+/* 094 */     if (!hashAgg_isNull_5) {
+/* 095 */       hashAgg_unsafeRowAggBuffer_0.setLong(1, hashAgg_value_5);
+/* 096 */     } else {
+/* 097 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(1);
+/* 098 */     }
+/* 099 */   }
+/* 100 */
+/* 101 */   private void hashAgg_doConsume_0(InternalRow inputadapter_row_0, int hashAgg_expr_0_0, boolean hashAgg_exprIsNull_0_0, double hashAgg_expr_1_0, boolean hashAgg_exprIsNull_1_0, long hashAgg_expr_2_0, boolean hashAgg_exprIsNull_2_0, double hashAgg_expr_3_0, boolean hashAgg_exprIsNull_3_0, long hashAgg_expr_4_0, boolean hashAgg_exprIsNull_4_0, long hashAgg_expr_5_0) throws java.io.IOException {
+/* 102 */     UnsafeRow hashAgg_unsafeRowAggBuffer_0 = null;
+/* 103 */
+/* 104 */     // generate grouping key
+/* 105 */     hashAgg_mutableStateArray_0[0].reset();
+/* 106 */
+/* 107 */     hashAgg_mutableStateArray_0[0].zeroOutNullBytes();
+/* 108 */
+/* 109 */     if (hashAgg_exprIsNull_0_0) {
+/* 110 */       hashAgg_mutableStateArray_0[0].setNullAt(0);
+/* 111 */     } else {
+/* 112 */       hashAgg_mutableStateArray_0[0].write(0, hashAgg_expr_0_0);
+/* 113 */     }
+/* 114 */     int hashAgg_unsafeRowKeyHash_0 = (hashAgg_mutableStateArray_0[0].getRow()).hashCode();
+/* 115 */     if (true) {
+/* 116 */       // try to get the buffer from hash map
+/* 117 */       hashAgg_unsafeRowAggBuffer_0 =
+/* 118 */       hashAgg_hashMap_0.getAggregationBufferFromUnsafeRow((hashAgg_mutableStateArray_0[0].getRow()), hashAgg_unsafeRowKeyHash_0);
+/* 119 */     }
+/* 120 */     // Can't allocate buffer from the hash map. Spill the map and fallback to sort-based
+/* 121 */     // aggregation after processing all input rows.
+/* 122 */     if (hashAgg_unsafeRowAggBuffer_0 == null) {
+/* 123 */       if (hashAgg_sorter_0 == null) {
+/* 124 */         hashAgg_sorter_0 = hashAgg_hashMap_0.destructAndCreateExternalSorter();
+/* 125 */       } else {
+/* 126 */         hashAgg_sorter_0.merge(hashAgg_hashMap_0.destructAndCreateExternalSorter());
+/* 127 */       }
+/* 128 */
+/* 129 */       // the hash map had be spilled, it should have enough memory now,
+/* 130 */       // try to allocate buffer again.
+/* 131 */       hashAgg_unsafeRowAggBuffer_0 = hashAgg_hashMap_0.getAggregationBufferFromUnsafeRow(
+/* 132 */         (hashAgg_mutableStateArray_0[0].getRow()), hashAgg_unsafeRowKeyHash_0);
+/* 133 */       if (hashAgg_unsafeRowAggBuffer_0 == null) {
+/* 134 */         // failed to allocate the first page
+/* 135 */         throw new org.apache.spark.memory.SparkOutOfMemoryError("No enough memory for aggregation");
+/* 136 */       }
+/* 137 */     }
+/* 138 */
+/* 139 */     // common sub-expressions
+/* 140 */
+/* 141 */     // evaluate aggregate functions and update aggregation buffers
+/* 142 */     hashAgg_doAggregate_avg_0(hashAgg_expr_2_0, hashAgg_exprIsNull_1_0, hashAgg_exprIsNull_2_0, hashAgg_unsafeRowAggBuffer_0, hashAgg_expr_1_0);
+/* 143 */     hashAgg_doAggregate_avg_1(hashAgg_exprIsNull_3_0, hashAgg_exprIsNull_4_0, hashAgg_expr_4_0, hashAgg_expr_3_0, hashAgg_unsafeRowAggBuffer_0);
+/* 144 */     hashAgg_doAggregate_count_0(hashAgg_unsafeRowAggBuffer_0, hashAgg_expr_5_0);
+/* 145 */
+/* 146 */   }
+/* 147 */
+/* 148 */   private void hashAgg_doAggregate_count_0(org.apache.spark.sql.catalyst.InternalRow hashAgg_unsafeRowAggBuffer_0, long hashAgg_expr_5_0) throws java.io.IOException {
+/* 149 */     long hashAgg_value_15 = hashAgg_unsafeRowAggBuffer_0.getLong(4);
+/* 150 */
+/* 151 */     long hashAgg_value_14 = -1L;
+/* 152 */
+/* 153 */     hashAgg_value_14 = hashAgg_value_15 + hashAgg_expr_5_0;
+/* 154 */
+/* 155 */     hashAgg_unsafeRowAggBuffer_0.setLong(4, hashAgg_value_14);
+/* 156 */   }
+/* 157 */
+/* 158 */   private void hashAgg_doAggregateWithKeysOutput_0(UnsafeRow hashAgg_keyTerm_0, UnsafeRow hashAgg_bufferTerm_0)
+/* 159 */   throws java.io.IOException {
+/* 160 */     ((org.apache.spark.sql.execution.metric.SQLMetric) references[5] /* numOutputRows */).add(1);
+/* 161 */
+/* 162 */     boolean hashAgg_isNull_17 = hashAgg_keyTerm_0.isNullAt(0);
+/* 163 */     int hashAgg_value_17 = hashAgg_isNull_17 ?
+/* 164 */     -1 : (hashAgg_keyTerm_0.getInt(0));
+/* 165 */     boolean hashAgg_isNull_18 = hashAgg_bufferTerm_0.isNullAt(0);
+/* 166 */     double hashAgg_value_18 = hashAgg_isNull_18 ?
+/* 167 */     -1.0 : (hashAgg_bufferTerm_0.getDouble(0));
+/* 168 */     boolean hashAgg_isNull_19 = hashAgg_bufferTerm_0.isNullAt(1);
+/* 169 */     long hashAgg_value_19 = hashAgg_isNull_19 ?
+/* 170 */     -1L : (hashAgg_bufferTerm_0.getLong(1));
+/* 171 */     boolean hashAgg_isNull_20 = hashAgg_bufferTerm_0.isNullAt(2);
+/* 172 */     double hashAgg_value_20 = hashAgg_isNull_20 ?
+/* 173 */     -1.0 : (hashAgg_bufferTerm_0.getDouble(2));
+/* 174 */     boolean hashAgg_isNull_21 = hashAgg_bufferTerm_0.isNullAt(3);
+/* 175 */     long hashAgg_value_21 = hashAgg_isNull_21 ?
+/* 176 */     -1L : (hashAgg_bufferTerm_0.getLong(3));
+/* 177 */     long hashAgg_value_22 = hashAgg_bufferTerm_0.getLong(4);
+/* 178 */     boolean hashAgg_isNull_25 = hashAgg_isNull_19;
+/* 179 */     double hashAgg_value_25 = -1.0;
+/* 180 */     if (!hashAgg_isNull_19) {
+/* 181 */       hashAgg_value_25 = (double) hashAgg_value_19;
+/* 182 */     }
+/* 183 */     boolean hashAgg_isNull_23 = false;
+/* 184 */     double hashAgg_value_23 = -1.0;
+/* 185 */     if (hashAgg_isNull_25 || hashAgg_value_25 == 0) {
+/* 186 */       hashAgg_isNull_23 = true;
+/* 187 */     } else {
+/* 188 */       if (hashAgg_isNull_18) {
+/* 189 */         hashAgg_isNull_23 = true;
+/* 190 */       } else {
+/* 191 */         hashAgg_value_23 = (double)(hashAgg_value_18 / hashAgg_value_25);
+/* 192 */       }
+/* 193 */     }
+/* 194 */     boolean hashAgg_isNull_29 = hashAgg_isNull_21;
+/* 195 */     double hashAgg_value_29 = -1.0;
+/* 196 */     if (!hashAgg_isNull_21) {
+/* 197 */       hashAgg_value_29 = (double) hashAgg_value_21;
+/* 198 */     }
+/* 199 */     boolean hashAgg_isNull_27 = false;
+/* 200 */     double hashAgg_value_27 = -1.0;
+/* 201 */     if (hashAgg_isNull_29 || hashAgg_value_29 == 0) {
+/* 202 */       hashAgg_isNull_27 = true;
+/* 203 */     } else {
+/* 204 */       if (hashAgg_isNull_20) {
+/* 205 */         hashAgg_isNull_27 = true;
+/* 206 */       } else {
+/* 207 */         hashAgg_value_27 = (double)(hashAgg_value_20 / hashAgg_value_29);
+/* 208 */       }
+/* 209 */     }
+/* 210 */
+/* 211 */     boolean hashAgg_isNull_34 = true;
+/* 212 */     double hashAgg_value_34 = -1.0;
+/* 213 */
+/* 214 */     if (!hashAgg_isNull_23) {
+/* 215 */       hashAgg_isNull_34 = false; // resultCode could change nullability.
+/* 216 */
+/* 217 */       hashAgg_value_34 = hashAgg_value_23 * 100.0D;
+/* 218 */
+/* 219 */     }
+/* 220 */     boolean hashAgg_isNull_33 = hashAgg_isNull_34;
+/* 221 */     double hashAgg_value_33 = -1.0;
+/* 222 */     if (!hashAgg_isNull_33) {
+/* 223 */       if (Double.isNaN(hashAgg_value_34) || Double.isInfinite(hashAgg_value_34)) {
+/* 224 */         hashAgg_value_33 = hashAgg_value_34;
+/* 225 */       } else {
+/* 226 */         hashAgg_value_33 = java.math.BigDecimal.valueOf(hashAgg_value_34).
+/* 227 */         setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+/* 228 */       }
+/* 229 */     }
+/* 230 */     boolean hashAgg_isNull_37 = hashAgg_isNull_27;
+/* 231 */     double hashAgg_value_37 = -1.0;
+/* 232 */     if (!hashAgg_isNull_37) {
+/* 233 */       if (Double.isNaN(hashAgg_value_27) || Double.isInfinite(hashAgg_value_27)) {
+/* 234 */         hashAgg_value_37 = hashAgg_value_27;
+/* 235 */       } else {
+/* 236 */         hashAgg_value_37 = java.math.BigDecimal.valueOf(hashAgg_value_27).
+/* 237 */         setScale(2, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
+/* 238 */       }
+/* 239 */     }
+/* 240 */     hashAgg_mutableStateArray_0[1].reset();
+/* 241 */
+/* 242 */     hashAgg_mutableStateArray_0[1].zeroOutNullBytes();
+/* 243 */
+/* 244 */     if (hashAgg_isNull_17) {
+/* 245 */       hashAgg_mutableStateArray_0[1].setNullAt(0);
+/* 246 */     } else {
+/* 247 */       hashAgg_mutableStateArray_0[1].write(0, hashAgg_value_17);
+/* 248 */     }
+/* 249 */
+/* 250 */     if (hashAgg_isNull_33) {
+/* 251 */       hashAgg_mutableStateArray_0[1].setNullAt(1);
+/* 252 */     } else {
+/* 253 */       hashAgg_mutableStateArray_0[1].write(1, hashAgg_value_33);
+/* 254 */     }
+/* 255 */
+/* 256 */     if (hashAgg_isNull_37) {
+/* 257 */       hashAgg_mutableStateArray_0[1].setNullAt(2);
+/* 258 */     } else {
+/* 259 */       hashAgg_mutableStateArray_0[1].write(2, hashAgg_value_37);
+/* 260 */     }
+/* 261 */
+/* 262 */     hashAgg_mutableStateArray_0[1].write(3, hashAgg_value_22);
+/* 263 */     append((hashAgg_mutableStateArray_0[1].getRow()));
+/* 264 */
+/* 265 */   }
+/* 266 */
+/* 267 */   protected void processNext() throws java.io.IOException {
+/* 268 */     if (!hashAgg_initAgg_0) {
+/* 269 */       hashAgg_initAgg_0 = true;
+/* 270 */
+/* 271 */       hashAgg_hashMap_0 = ((org.apache.spark.sql.execution.aggregate.HashAggregateExec) references[0] /* plan */).createHashMap();
+/* 272 */       long wholestagecodegen_beforeAgg_0 = System.nanoTime();
+/* 273 */       hashAgg_doAggregateWithKeys_0();
+/* 274 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[6] /* aggTime */).add((System.nanoTime() - wholestagecodegen_beforeAgg_0) / 1000000);
+/* 275 */     }
+/* 276 */     // output the result
+/* 277 */
+/* 278 */     while ( hashAgg_mapIter_0.next()) {
+/* 279 */       UnsafeRow hashAgg_aggKey_0 = (UnsafeRow) hashAgg_mapIter_0.getKey();
+/* 280 */       UnsafeRow hashAgg_aggBuffer_0 = (UnsafeRow) hashAgg_mapIter_0.getValue();
+/* 281 */       hashAgg_doAggregateWithKeysOutput_0(hashAgg_aggKey_0, hashAgg_aggBuffer_0);
+/* 282 */       if (shouldStop()) return;
+/* 283 */     }
+/* 284 */     hashAgg_mapIter_0.close();
+/* 285 */     if (hashAgg_sorter_0 == null) {
+/* 286 */       hashAgg_hashMap_0.free();
+/* 287 */     }
+/* 288 */   }
+/* 289 */
+/* 290 */   private void hashAgg_doAggregate_avg_1(boolean hashAgg_exprIsNull_3_0, boolean hashAgg_exprIsNull_4_0, long hashAgg_expr_4_0, double hashAgg_expr_3_0, org.apache.spark.sql.catalyst.InternalRow hashAgg_unsafeRowAggBuffer_0) throws java.io.IOException {
+/* 291 */     boolean hashAgg_isNull_8 = true;
+/* 292 */     double hashAgg_value_8 = -1.0;
+/* 293 */     boolean hashAgg_isNull_9 = hashAgg_unsafeRowAggBuffer_0.isNullAt(2);
+/* 294 */     double hashAgg_value_9 = hashAgg_isNull_9 ?
+/* 295 */     -1.0 : (hashAgg_unsafeRowAggBuffer_0.getDouble(2));
+/* 296 */     if (!hashAgg_isNull_9) {
+/* 297 */       if (!hashAgg_exprIsNull_3_0) {
+/* 298 */         hashAgg_isNull_8 = false; // resultCode could change nullability.
+/* 299 */
+/* 300 */         hashAgg_value_8 = hashAgg_value_9 + hashAgg_expr_3_0;
+/* 301 */
+/* 302 */       }
+/* 303 */
+/* 304 */     }
+/* 305 */     boolean hashAgg_isNull_11 = true;
+/* 306 */     long hashAgg_value_11 = -1L;
+/* 307 */     boolean hashAgg_isNull_12 = hashAgg_unsafeRowAggBuffer_0.isNullAt(3);
+/* 308 */     long hashAgg_value_12 = hashAgg_isNull_12 ?
+/* 309 */     -1L : (hashAgg_unsafeRowAggBuffer_0.getLong(3));
+/* 310 */     if (!hashAgg_isNull_12) {
+/* 311 */       if (!hashAgg_exprIsNull_4_0) {
+/* 312 */         hashAgg_isNull_11 = false; // resultCode could change nullability.
+/* 313 */
+/* 314 */         hashAgg_value_11 = hashAgg_value_12 + hashAgg_expr_4_0;
+/* 315 */
+/* 316 */       }
+/* 317 */
+/* 318 */     }
+/* 319 */
+/* 320 */     if (!hashAgg_isNull_8) {
+/* 321 */       hashAgg_unsafeRowAggBuffer_0.setDouble(2, hashAgg_value_8);
+/* 322 */     } else {
+/* 323 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(2);
+/* 324 */     }
+/* 325 */
+/* 326 */     if (!hashAgg_isNull_11) {
+/* 327 */       hashAgg_unsafeRowAggBuffer_0.setLong(3, hashAgg_value_11);
+/* 328 */     } else {
+/* 329 */       hashAgg_unsafeRowAggBuffer_0.setNullAt(3);
+/* 330 */     }
+/* 331 */   }
+/* 332 */
+/* 333 */ }
+
+== Subtree 3 / 3 (maxMethodCodeSize:154; maxConstantPoolSize:134(0.20% used); numInnerClasses:0) ==
+*(3) Sort [hour#874 ASC NULLS FIRST], true, 0
++- AQEShuffleRead coalesced
+   +- ShuffleQueryStage 1
+      +- Exchange rangepartitioning(hour#874 ASC NULLS FIRST, 48), ENSURE_REQUIREMENTS, [plan_id=3862]
+         +- *(2) HashAggregate(keys=[_groupingexpression#943], functions=[avg(cast((speed_mph#4 < 35.0) as int)), avg(speed_mph#4), count(1)], output=[hour#874, congested_pct#885, avg_speed#887, readings#889L])
+            +- AQEShuffleRead coalesced
+               +- ShuffleQueryStage 0
+                  +- Exchange hashpartitioning(_groupingexpression#943, 48), ENSURE_REQUIREMENTS, [plan_id=3830]
+                     +- *(1) HashAggregate(keys=[_groupingexpression#943], functions=[partial_avg(cast((speed_mph#4 < 35.0) as int)), partial_avg(speed_mph#4), partial_count(1)], output=[_groupingexpression#943, sum#950, count#951L, sum#952, count#953L, count#954L])
+                        +- *(1) Project [speed_mph#4, hour(ts_local#2, Some(UTC)) AS _groupingexpression#943]
+                           +- *(1) Filter ((((isnotnull(quality#5) AND isnotnull(ts_local#2)) AND (quality#5 = observed)) AND (dayofweek(cast(ts_local#2 as date)) >= 2)) AND (dayofweek(cast(ts_local#2 as date)) <= 6))
+                              +- *(1) ColumnarToRow
+                                 +- FileScan parquet [ts_local#2,speed_mph#4,quality#5,month#8] Batched: true, DataFilters: [isnotnull(quality#5), isnotnull(ts_local#2), (quality#5 = observed), (dayofweek(cast(ts_local#2 ..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/mnt/c/Users/ssis/Desktop/bdaa/data/processed/pems_bay/clean], PartitionFilters: [], PushedFilters: [IsNotNull(quality), IsNotNull(ts_local), EqualTo(quality,observed)], ReadSchema: struct<ts_local:timestamp,speed_mph:float,quality:string>
+
+Generated code:
+/* 001 */ public Object generate(Object[] references) {
+/* 002 */   return new GeneratedIteratorForCodegenStage3(references);
+/* 003 */ }
+/* 004 */
+/* 005 */ // codegenStageId=3
+/* 006 */ final class GeneratedIteratorForCodegenStage3 extends org.apache.spark.sql.execution.BufferedRowIterator {
+/* 007 */   private Object[] references;
+/* 008 */   private scala.collection.Iterator[] inputs;
+/* 009 */   private boolean sort_needToSort_0;
+/* 010 */   private org.apache.spark.sql.execution.UnsafeExternalRowSorter sort_sorter_0;
+/* 011 */   private org.apache.spark.executor.TaskMetrics sort_metrics_0;
+/* 012 */   private scala.collection.Iterator<UnsafeRow> sort_sortedIter_0;
+/* 013 */   private scala.collection.Iterator inputadapter_input_0;
+/* 014 */
+/* 015 */   public GeneratedIteratorForCodegenStage3(Object[] references) {
+/* 016 */     this.references = references;
+/* 017 */   }
+/* 018 */
+/* 019 */   public void init(int index, scala.collection.Iterator[] inputs) {
+/* 020 */     partitionIndex = index;
+/* 021 */     this.inputs = inputs;
+/* 022 */     sort_needToSort_0 = true;
+/* 023 */     sort_sorter_0 = ((org.apache.spark.sql.execution.SortExec) references[0] /* plan */).createSorter();
+/* 024 */     sort_metrics_0 = org.apache.spark.TaskContext.get().taskMetrics();
+/* 025 */
+/* 026 */     inputadapter_input_0 = inputs[0];
+/* 027 */
+/* 028 */   }
+/* 029 */
+/* 030 */   private void sort_addToSorter_0() throws java.io.IOException {
+/* 031 */     while ( inputadapter_input_0.hasNext()) {
+/* 032 */       InternalRow inputadapter_row_0 = (InternalRow) inputadapter_input_0.next();
+/* 033 */
+/* 034 */       sort_sorter_0.insertRow((UnsafeRow)inputadapter_row_0);
+/* 035 */       // shouldStop check is eliminated
+/* 036 */     }
+/* 037 */
+/* 038 */   }
+/* 039 */
+/* 040 */   protected void processNext() throws java.io.IOException {
+/* 041 */     if (sort_needToSort_0) {
+/* 042 */       long sort_spillSizeBefore_0 = sort_metrics_0.memoryBytesSpilled();
+/* 043 */       sort_addToSorter_0();
+/* 044 */       sort_sortedIter_0 = sort_sorter_0.sort();
+/* 045 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[3] /* sortTime */).add(sort_sorter_0.getSortTimeNanos() / 1000000);
+/* 046 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[1] /* peakMemory */).add(sort_sorter_0.getPeakMemoryUsage());
+/* 047 */       ((org.apache.spark.sql.execution.metric.SQLMetric) references[2] /* spillSize */).add(sort_metrics_0.memoryBytesSpilled() - sort_spillSizeBefore_0);
+/* 048 */       sort_metrics_0.incPeakExecutionMemory(sort_sorter_0.getPeakMemoryUsage());
+/* 049 */       sort_needToSort_0 = false;
+/* 050 */     }
+/* 051 */
+/* 052 */     while ( sort_sortedIter_0.hasNext()) {
+/* 053 */       UnsafeRow sort_outputRow_0 = (UnsafeRow)sort_sortedIter_0.next();
+/* 054 */
+/* 055 */       append(sort_outputRow_0);
+/* 056 */
+/* 057 */       if (shouldStop()) return;
+/* 058 */     }
+/* 059 */   }
+/* 060 */
+/* 061 */ }
+
